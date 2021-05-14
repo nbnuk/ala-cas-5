@@ -5,6 +5,7 @@ jdk:
 branches:
   only:
   - master
+  - develop
 cache:
   directories:
   - $HOME/.m2/repository
