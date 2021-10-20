@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.ApplicationContext
+import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.DependsOn
@@ -30,6 +31,12 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices
 import org.springframework.webflow.execution.Action
 import javax.sql.DataSource
 
+/**
+ * Creates the WebFlow actions required for the changes to the default CAS login/logout WebFlows.
+ *
+ * Changes to the CAS WebFlows are made through the alaAuthCookieWebflowConfigurer Bean, which is added
+ * to the web flow configuration plan by extending CasWebflowExecutionPlanConfigurer
+ */
 @Configuration("alaCasWebflowConfiguration")
 @EnableConfigurationProperties(AlaCasProperties::class, CasConfigurationProperties::class)
 class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
@@ -67,6 +74,9 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
     lateinit var userCreatorDataSource: DataSource
 
     @Autowired
+    lateinit var messageSource: MessageSource
+
+    @Autowired
     @Qualifier("userCreatorTransactionManager")
     lateinit var userCreatorTransactionManager: DataSourceTransactionManager
 
@@ -85,6 +95,9 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     lateinit var webApplicationServiceFactory: ServiceFactory<WebApplicationService>
+
+    @Bean
+    fun extraAttributesService() = ExtraAttributesService(alaCasProperties, userCreatorDataSource, userCreatorTransactionManager, cachingAttributeRepository, messageSource)
 
     @Bean
     @RefreshScope
@@ -110,7 +123,7 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
 
     @Bean
     @Qualifier(AlaCasWebflowConfigurer.ACTION_RENDER_DELEGATED_AUTH_EXTRA_ATTRS)
-    fun renderDelegatedAuthAction(): Action = RenderDelegatedAuthAction(alaCasProperties)
+    fun renderDelegatedAuthAction(): Action = RenderDelegatedAuthAction(alaCasProperties, extraAttributesService())
 
     @Bean
     @Qualifier(AlaCasWebflowConfigurer.ACTION_UPDATE_PASSWORD)
@@ -130,7 +143,23 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
 
     @Bean
     @Qualifier(AlaCasWebflowConfigurer.STATE_ID_SAVE_EXTRA_ATTRS_ACTION)
-    fun saveExtraAttrsAction() = SaveExtraAttrsAction(alaCasProperties, userCreatorDataSource, userCreatorTransactionManager, cachingAttributeRepository)
+    fun saveExtraAttrsAction() = SaveExtraAttrsAction(alaCasProperties, userCreatorDataSource, extraAttributesService())
+
+    @Bean
+    @Qualifier(AlaCasWebflowConfigurer.DECISION_ID_SURVEY)
+    fun decisionSurveyAction() = DecisionSurveyAction(alaCasProperties, userCreatorDataSource)
+
+    @Bean
+    @Qualifier(AlaCasWebflowConfigurer.STATE_ID_SAVE_SURVEY_ACTION)
+    fun saveSurveyAction() = SaveSurveyAction(alaCasProperties, userCreatorDataSource, extraAttributesService())
+
+    @Bean
+    @Qualifier(AlaCasWebflowConfigurer.ACTION_ENTER_SURVEY)
+    fun enterSurveyAction() : Action = EnterSurveyAction(alaCasProperties)
+
+    @Bean
+    @Qualifier(AlaCasWebflowConfigurer.ACTION_RENDER_SURVEY)
+    fun renderSurveyAction(): Action = RenderSurveyAction(extraAttributesService())
 
     @ConditionalOnMissingBean(name = ["alaAuthCookieWebflowConfigurer"])
     @Bean
