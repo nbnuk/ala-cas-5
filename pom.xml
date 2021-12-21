@@ -14,7 +14,7 @@
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
     <!-- Version should ${cas.version}-${ala.build.version}(-SNAPSHOT)? -->
-    <version>5.3.12-4</version>
+    <version>5.3.12-5</version>
 
     <name>ALA CAS 5</name>
     <description>ALA Central Authentication Service v5</description>
@@ -829,7 +829,7 @@
 
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ssZ</maven.build.timestamp.format>
 
-        <log4j.version>2.15.0</log4j.version>
+        <log4j.version>2.17.0</log4j.version>
     </properties>
 
     <repositories>
