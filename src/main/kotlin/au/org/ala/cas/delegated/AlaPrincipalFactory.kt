@@ -6,12 +6,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder
 import org.apereo.cas.authentication.Credential
 import org.apereo.cas.authentication.exceptions.AccountDisabledException
 import org.apereo.cas.authentication.principal.*
+import org.apereo.services.persondir.IPersonAttributeDao
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl
 import javax.security.auth.login.FailedLoginException
 
 class AlaPrincipalFactory(
     private val principalResolver: PrincipalResolver,
-    private val cachingAttributeRepository: CachingPersonAttributeDaoImpl,
+    private val cachingAttributeRepository: IPersonAttributeDao, //CachingPersonAttributeDaoImpl,
     val userCreator: UserCreator
 ) : PrincipalFactory {
 
@@ -25,10 +26,10 @@ class AlaPrincipalFactory(
     }
 
     override fun createPrincipal(id: String) = createAlaPrincipal(id, emptyMap())
+//String id, Map<String, List<Object>> attributes
+    override fun createPrincipal(id: String, attributes: Map<String, List<Any>>) = createAlaPrincipal(id, attributes)
 
-    override fun createPrincipal(id: String, attributes: Map<String, Any>) = createAlaPrincipal(id, attributes)
-
-    private fun createAlaPrincipal(id: String, attributes: Map<String, Any>): Principal {
+    private fun createAlaPrincipal(id: String, attributes: Map<String, List<Any>>): Principal {
         val attributeParser = AttributeParser.create(id, attributes)
         val email = attributeParser.findEmail()
         log.debug("email : {}", email)
@@ -71,7 +72,8 @@ class AlaPrincipalFactory(
 
                 // invalidate cache for the newly created user
                 // TODO there must be a less coupled way of achieving this
-                cachingAttributeRepository.removeUserAttributes(emailAddress)
+                // TODO Re-enable attribute caching
+                // cachingAttributeRepository.removeUserAttributes(emailAddress)
 
                 // re-try (we have to retry, because that is how we get the required "userid")
                 principal = principalResolver.resolve(alaCredential)

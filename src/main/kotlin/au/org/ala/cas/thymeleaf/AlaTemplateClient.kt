@@ -7,7 +7,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import org.apereo.cas.configuration.support.Beans
 import org.apereo.cas.ticket.registry.TicketRegistry
 import org.apereo.cas.util.HttpRequestUtils
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator
+import org.apereo.cas.web.cookie.CasCookieBuilder
 import org.apereo.cas.web.support.WebUtils
 import org.springframework.webflow.execution.RequestContext
 import org.springframework.webflow.execution.RequestContextHolder
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest
 class AlaTemplateClient(
     val skinConfig: SkinProperties,
 //    val cookieName: String,
-    val ticketGrantingTicketCookieGenerator: CookieRetrievingCookieGenerator,
+    val ticketGrantingTicketCookieGenerator: CasCookieBuilder,
     val ticketRegistry: TicketRegistry) {
 
     companion object {

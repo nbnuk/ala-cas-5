@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties
 import org.apereo.cas.web.flow.CasWebflowConstants
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.core.Ordered
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry
 import org.springframework.webflow.engine.ActionState
@@ -21,7 +22,7 @@ class AlaCasWebflowConfigurer(
     logoutFlowDefinitionRegistry: FlowDefinitionRegistry,
     val generateAuthCookieAction: GenerateAuthCookieAction,
     val removeAuthCookieAction: RemoveAuthCookieAction,
-    applicationContext: ApplicationContext,
+    applicationContext: ConfigurableApplicationContext,
     val alaCasProperties: AlaCasProperties,
     casConfigurationProperties: CasConfigurationProperties
 ) :
@@ -100,7 +101,7 @@ class AlaCasWebflowConfigurer(
         // 1. Is this is delegated login creating a new user? If Yes continue, otherwise resume existing flow
         // 2. Show extra attributes form to collect additional properties for profile
         // 3.
-        val clientAction = flow.getState(CasWebflowConstants.STATE_ID_CLIENT_ACTION) as ActionState
+        val clientAction = flow.getState(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION) as ActionState
         val successTransition = clientAction.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS) as Transition
         createTransitionForState(clientAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, DECISION_ID_EXTRA_ATTRS, true)
 

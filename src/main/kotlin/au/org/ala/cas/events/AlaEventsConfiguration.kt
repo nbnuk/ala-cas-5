@@ -28,7 +28,7 @@ class AlaEventsConfiguration {
     fun alaCasEventListener(
         @Autowired @Qualifier("cachingAttributeRepository") cachingAttributeRepository: IPersonAttributeDao
     ): AlaCasEventListener {
-        return AlaCasEventListener(JpaBeans.newDataSource(alaCasProperties.userCreator.jdbc), alaCasProperties.userCreator.jdbc.updateLastLoginTimeSql, lastLoginExecutor(), cachingAttributeRepository as? CachingPersonAttributeDaoImpl ?: throw IllegalStateException())
+        return AlaCasEventListener(JpaBeans.newDataSource(alaCasProperties.userCreator.jdbc), alaCasProperties.userCreator.jdbc.updateLastLoginTimeSql, lastLoginExecutor(), cachingAttributeRepository)
     }
 }
 

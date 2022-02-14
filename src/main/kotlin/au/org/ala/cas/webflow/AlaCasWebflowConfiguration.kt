@@ -9,11 +9,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties
 import org.apereo.cas.configuration.support.Beans
 import org.apereo.cas.services.ServicesManager
 import org.apereo.cas.ticket.registry.TicketRegistrySupport
-import org.apereo.cas.web.flow.CasWebflowConfigurer
+import org.apereo.cas.web.cookie.CasCookieBuilder
+import org.apereo.cas.web.cookie.CookieGenerationContext
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer
-import org.apereo.cas.web.flow.logout.LogoutAction
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator
+import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator
+import org.apereo.services.persondir.IPersonAttributeDao
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -21,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -82,19 +84,19 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("cachingAttributeRepository")
-    lateinit var cachingAttributeRepository: CachingPersonAttributeDaoImpl
+    lateinit var cachingAttributeRepository: IPersonAttributeDao //CachingPersonAttributeDaoImpl
 
-    @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
-    lateinit var ticketGrantingTicketCookieGenerator: CookieRetrievingCookieGenerator
-
-    @Autowired
-    @Qualifier("servicesManager")
-    lateinit var servicesManager: ServicesManager
-
-    @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    lateinit var webApplicationServiceFactory: ServiceFactory<WebApplicationService>
+//    @Autowired
+//    @Qualifier("ticketGrantingTicketCookieGenerator")
+//    lateinit var ticketGrantingTicketCookieGenerator: CasCookieBuilder
+//
+//    @Autowired
+//    @Qualifier("servicesManager")
+//    lateinit var servicesManager: ServicesManager
+//
+//    @Autowired
+//    @Qualifier("webApplicationServiceFactory")
+//    lateinit var webApplicationServiceFactory: ServiceFactory<WebApplicationService>
 
     @Bean
     fun extraAttributesService() = ExtraAttributesService(alaCasProperties, userCreatorDataSource, userCreatorTransactionManager, cachingAttributeRepository, messageSource)
@@ -102,12 +104,21 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
     @Bean
     @RefreshScope
     @Qualifier("alaProxyAuthenticationCookieGenerator")
-    fun alaProxyAuthenticationCookieGenerator(): CookieRetrievingCookieGenerator =
-        alaCasProperties.cookie.run {
-            CookieRetrievingCookieGenerator(name, path, maxAge, isSecure, domain, isHttpOnly).also { cookieGen ->
-                cookieGen.setRememberMeMaxAge(Beans.newDuration(rememberMeMaxAge).seconds.toInt())
-            }
+    fun alaProxyAuthenticationCookieGenerator(): CasCookieBuilder {
+        val context = alaCasProperties.cookie.run {
+            CookieGenerationContext.builder()
+                .name(name)
+                .path(path)
+                .maxAge(maxAge)
+                .secure(isSecure)
+                .domain(domain)
+                .httpOnly(isHttpOnly)
+                .rememberMeMaxAge(Beans.newDuration(rememberMeMaxAge).seconds.toInt())
+                .sameSitePolicy(sameSitePolicy)
+                .build()
         }
+        return CookieRetrievingCookieGenerator(context)
+    }
 
     @Bean
     fun generateAuthCookieAction(): GenerateAuthCookieAction =
@@ -128,14 +139,14 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
     @Bean
     @Qualifier(AlaCasWebflowConfigurer.ACTION_UPDATE_PASSWORD)
     fun updatePasswordAction(): Action = UpdatePasswordAction(
-        alaCasProperties, PasswordEncoderUtils.newPasswordEncoder(alaCasProperties.userCreator.passwordEncoder),
+        alaCasProperties, PasswordEncoderUtils.newPasswordEncoder(alaCasProperties.userCreator.passwordEncoder, applicationContext),
         userCreatorDataSource, userCreatorTransactionManager
     )
 
-    @RefreshScope
-    @Bean("logoutAction")
-    @Qualifier("logoutAction")
-    fun logoutAction(): Action = AlaLogoutAction(webApplicationServiceFactory, servicesManager, casConfigurationProperties.logout)
+//    @RefreshScope
+//    @Bean("logoutAction")
+//    @Qualifier("logoutAction")
+//    fun logoutAction(): Action = AlaLogoutAction(webApplicationServiceFactory, servicesManager, casConfigurationProperties.logout)
 
     @Bean
     @Qualifier(AlaCasWebflowConfigurer.DECISION_ID_EXTRA_ATTRS)
@@ -171,7 +182,7 @@ class AlaCasWebflowConfiguration : CasWebflowExecutionPlanConfigurer {
             logoutFlowDefinitionRegistry,
             generateAuthCookieAction(),
             removeAuthCookieAction(),
-            applicationContext,
+            applicationContext as ConfigurableApplicationContext,
             alaCasProperties,
             casConfigurationProperties
         )

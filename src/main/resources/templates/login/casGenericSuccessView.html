@@ -18,12 +18,13 @@
                     <h2 class="panel-title" th:utext="#{screen.success.header}">Success</h2>
                 </div>
                 <div class="panel-body">
-                    <p th:utext="#{screen.success.success(${principal.attributes['email'][0] ?: principal.id})}">You, <strong>username</strong>, have successfully
+<!--                    <p th:utext="#{screen.success.success(${authentication.principal})}">You, <strong>username</strong>, have successfully-->
+                    <p th:utext="#{screen.success.success(${authentication.principal.attributes['email'][0] ?: authentication.principal.id})}">You, <strong>username</strong>, have successfully
                         logged into the Central Authentication Service. However, you are seeing this page because CAS does not
                         know about your target destination and how to get you there. Examine the authentication request again
                         and make sure a target service/application that is authorized and registered with CAS is specified.</p>
                     <p th:utext="#{screen.success.security}">When you are finished, for security reasons, please <a
-                            href="logout">log out</a> and exit your web browser.</p>
+                            href="../logout">log out</a> and exit your web browser.</p>
                 </div>
             </div>
         </div>

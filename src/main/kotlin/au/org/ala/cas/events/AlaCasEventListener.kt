@@ -1,12 +1,10 @@
 package au.org.ala.cas.events
 
 import au.org.ala.cas.alaUserId
-import au.org.ala.cas.singleStringAttributeValue
 import au.org.ala.cas.stringAttribute
 import au.org.ala.utils.logger
-import org.apereo.cas.authentication.UsernamePasswordCredential
-import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent
+import org.apereo.services.persondir.IPersonAttributeDao
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl
 import org.springframework.context.event.EventListener
 import org.springframework.jdbc.core.JdbcTemplate
@@ -17,7 +15,7 @@ open class AlaCasEventListener(
     val dataSource: DataSource,
     val updateSql: String,
     val executorService: ExecutorService,
-    val cachingAttributeRepository: CachingPersonAttributeDaoImpl
+    val cachingAttributeRepository: IPersonAttributeDao //CachingPersonAttributeDaoImpl
 ) {
 
     companion object {
@@ -35,7 +33,7 @@ open class AlaCasEventListener(
                 try {
                     val template = JdbcTemplate(dataSource)
                     template.update(updateSql, userid)
-                    email?.let { cachingAttributeRepository.removeUserAttributes(it) }
+//                    email?.let { cachingAttributeRepository.removeUserAttributes(it) }
                 } catch (e: Exception) {
                     log.error("Couldn't update last login time for {} using SQL {}", userid, updateSql, e)
                 }

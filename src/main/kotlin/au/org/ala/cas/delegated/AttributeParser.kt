@@ -1,11 +1,13 @@
 package au.org.ala.cas.delegated
 
+import au.org.ala.cas.singleBooleanAttributeValue
+import au.org.ala.cas.singleStringAttributeValue
 import au.org.ala.utils.logger
 import org.json.JSONArray
 import org.pac4j.core.profile.UserProfile
+import org.pac4j.core.util.Pac4jConstants
 import org.pac4j.oauth.profile.facebook.FacebookProfile
 import org.pac4j.oauth.profile.github.GitHubProfile
-import org.pac4j.oauth.profile.google2.Google2Email
 import org.pac4j.oauth.profile.google2.Google2Profile
 import org.pac4j.oauth.profile.google2.Google2ProfileDefinition
 import org.pac4j.oauth.profile.linkedin2.LinkedIn2Profile
@@ -25,7 +27,7 @@ interface AttributeParser {
         private val log = logger()
 
         fun create(typedId: String, userAttributes: Map<String, Any>): AttributeParser {
-            val profileType = typedId.substringBefore(UserProfile.SEPARATOR)
+            val profileType = typedId.substringBefore(Pac4jConstants.TYPED_ID_SEPARATOR)
 
             return when (profileType) {
                 GitHubProfile::class.java.name -> GithubAttributeParser(userAttributes)
@@ -97,7 +99,7 @@ class GithubAttributeParser(val userAttributes: Map<String, Any>) : AttributePar
         //          array/set of GitHub user's emails, and use the email address that is: primary AND verified.
         //
 
-        val githubAccessToken = userAttributes["access_token"] as String?
+        val githubAccessToken = singleStringAttributeValue(userAttributes["access_token"])
         if (githubAccessToken == null) {
             log.debug("can't get a valid GitHub access_token!")
             return null
@@ -131,10 +133,10 @@ class GithubAttributeParser(val userAttributes: Map<String, Any>) : AttributePar
     }
 
     override fun findFirstname() =
-        AttributeParser.extractFirstName(userAttributes["name"] as? String, userAttributes["login"] as? String)
+        AttributeParser.extractFirstName(singleStringAttributeValue(userAttributes["name"]), singleStringAttributeValue(userAttributes["login"]))
 
     override fun findLastname() =
-        AttributeParser.extractLastName(userAttributes["name"] as? String, userAttributes["login"] as? String)
+        AttributeParser.extractLastName(singleStringAttributeValue(userAttributes["name"]), singleStringAttributeValue(userAttributes["login"]))
 
     fun HTTP_GET(urlStr: String, githubAccessToken: String): String? {
         var conn: HttpURLConnection? = null
@@ -174,16 +176,16 @@ class OAuth20AttributeParser(val userAttributes: Map<String, Any>) : AttributePa
     override fun findLastname() = findFirst("last_name", "last-name", "family_name", "family-name")
 
     internal fun findFirst(vararg attributeNames: String) =
-        attributeNames.mapNotNull { userAttributes[it] as? String }.firstOrNull()
+        attributeNames.mapNotNull { singleStringAttributeValue(userAttributes[it]) }.firstOrNull()
 }
 
 class TwitterAttributeParser(val userAttributes: Map<String, Any>) : AttributeParser {
-    override fun findEmail() = userAttributes["email"] as? String
+    override fun findEmail() = singleStringAttributeValue(userAttributes["email"])
     override fun findFirstname() =
-        AttributeParser.extractFirstName(userAttributes["name"] as? String, userAttributes["screen_name"] as? String)
+        AttributeParser.extractFirstName(singleStringAttributeValue(userAttributes["name"]), singleStringAttributeValue(userAttributes["screen_name"]))
 
     override fun findLastname() =
-        AttributeParser.extractLastName(userAttributes["name"] as? String, userAttributes["screen_name"] as? String)
+        AttributeParser.extractLastName(singleStringAttributeValue(userAttributes["name"]), singleStringAttributeValue(userAttributes["screen_name"]))
 }
 
 class Google2AttributeParser(val userAttributes: Map<String, Any>) : AttributeParser {
@@ -197,27 +199,29 @@ class Google2AttributeParser(val userAttributes: Map<String, Any>) : AttributePa
         //       the email "type"; so just to be sure we do ENFORCE here returning the email
         //       of type "account".
         //
-        val emails = userAttributes[Google2ProfileDefinition.EMAILS]
-        val googleEmail = when (emails) {
-            is List<*> -> (emails as List<Google2Email>).firstOrNull { it.type == "account" }?.email
-            else -> {
-                if (userAttributes[Google2ProfileDefinition.EMAIL_VERIFIED] as? Boolean != false) {
-                    userAttributes[Google2ProfileDefinition.EMAIL]?.toString()
+//        val emails = userAttributes[Google2ProfileDefinition.EMAILS]
+        val googleEmail =
+                if (singleBooleanAttributeValue(userAttributes[Google2ProfileDefinition.EMAIL_VERIFIED]) == true) {
+                    singleStringAttributeValue(userAttributes[Google2ProfileDefinition.EMAIL])
                 } else {
                     null
                 }
-            }
-        }
 
         // Not sure if this can really happen; we should reach this point only after a successful authentication,
         // and that should be possible ONLY with a valid "account" email.
         if (googleEmail == null) {
-            log.debug("error, can't find required Google2Profile email of type \"account\" in {}!", emails)
+            log.debug("error, can't find required Google2Profile email of type \"account\" in {}!", userAttributes)
         }
         return googleEmail
     }
 
-    override fun findFirstname() = userAttributes[Google2ProfileDefinition.GIVEN_NAME] as? String ?: AttributeParser.extractFirstName(userAttributes[Google2ProfileDefinition.NAME] as? String, "")
-    override fun findLastname() = userAttributes[Google2ProfileDefinition.FAMILY_NAME] as? String ?: userAttributes["family_name"] as? String ?: AttributeParser.extractLastName(userAttributes[Google2ProfileDefinition.NAME] as? String, "")
+    override fun findFirstname() =
+        singleStringAttributeValue(userAttributes[Google2ProfileDefinition.GIVEN_NAME])
+            ?: AttributeParser.extractFirstName(singleStringAttributeValue(userAttributes[Google2ProfileDefinition.NAME]), "")
+
+    override fun findLastname() =
+        singleStringAttributeValue(userAttributes[Google2ProfileDefinition.FAMILY_NAME])
+            ?: singleStringAttributeValue(userAttributes["family_name"])
+            ?: AttributeParser.extractLastName(singleStringAttributeValue(userAttributes[Google2ProfileDefinition.NAME]), "")
 
 }

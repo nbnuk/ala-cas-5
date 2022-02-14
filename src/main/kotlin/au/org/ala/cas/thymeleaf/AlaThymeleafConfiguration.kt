@@ -2,8 +2,7 @@ package au.org.ala.cas.thymeleaf
 
 import au.org.ala.cas.AlaCasProperties
 import org.apereo.cas.ticket.registry.TicketRegistry
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator
-import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator
+import org.apereo.cas.web.cookie.CasCookieBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -22,7 +21,7 @@ class AlaThymeleafConfiguration {
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    lateinit var ticketGrantingTicketCookieGenerator: CookieRetrievingCookieGenerator
+    lateinit var ticketGrantingTicketCookieGenerator: CasCookieBuilder
 
     @Bean
     fun alaTemplateClient() = AlaTemplateClient(alaCasProperties.skin, ticketGrantingTicketCookieGenerator, ticketRegistry)

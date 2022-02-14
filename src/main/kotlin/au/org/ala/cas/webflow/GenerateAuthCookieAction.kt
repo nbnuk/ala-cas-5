@@ -1,21 +1,22 @@
 package au.org.ala.cas.webflow
 
-import au.org.ala.cas.singleStringAttributeValue
 import au.org.ala.cas.stringAttribute
 import au.org.ala.utils.logger
 import org.apereo.cas.authentication.AuthenticationException
 import org.apereo.cas.ticket.InvalidTicketException
 import org.apereo.cas.ticket.registry.TicketRegistrySupport
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator
+import org.apereo.cas.web.cookie.CasCookieBuilder
 import org.apereo.cas.web.support.WebUtils
 import org.springframework.webflow.action.AbstractAction
 import org.springframework.webflow.execution.Event
 import org.springframework.webflow.execution.RequestContext
 import java.net.URLEncoder
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 open class GenerateAuthCookieAction(
     val ticketRegistrySupport: TicketRegistrySupport,
-    val alaProxyAuthenticationCookieGenerator: CookieRetrievingCookieGenerator,
+    val alaProxyAuthenticationCookieGenerator: CasCookieBuilder,
     val quoteCookieValue: Boolean,
     val encodeCookieValue: Boolean
 ) : AbstractAction() {
@@ -41,7 +42,11 @@ open class GenerateAuthCookieAction(
                 )
             val email = authentication.stringAttribute("email") ?: authentication.principal.id ?: throw IllegalStateException("Principal id is missing?!")
 
-            alaProxyAuthenticationCookieGenerator.addCookie(context, quoteValue(encodeValue(email)))
+            alaProxyAuthenticationCookieGenerator.addCookie(
+                context.externalContext.nativeRequest as? HttpServletRequest,
+                context.externalContext.nativeResponse as? HttpServletResponse,
+                quoteValue(encodeValue(email))
+            )
         } else {
             log.debug("Ticket-granting ticket ID is blank")
         }

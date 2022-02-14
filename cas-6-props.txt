@@ -1,0 +1,78 @@
+	cas.authn.attribute-repository.defaultattributestorelease = id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,legacyPassword,created,lastLogin (Origin: "cas.authn.attribute-repository.defaultAttributesToRelease" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.attribute-repository.expirationtime = 5 (Origin: "cas.authn.attribute-repository.expirationTime" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.attribute-repository.expirationtimeunit = MINUTES (Origin: "cas.authn.attribute-repository.expirationTimeUnit" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.attribute-repository.maximumcachesize = 1000 (Origin: "cas.authn.attribute-repository.maximumCacheSize" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.attribute-repository.merger = REPLACE (Origin: "cas.authn.attribute-repository.merger" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.claimsmap.email = email (Origin: "cas.authn.oidc.claimsMap.email" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.claimsmap.familyname = sn (Origin: "cas.authn.oidc.claimsMap.family_name" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.claimsmap.givenname = givenName (Origin: "cas.authn.oidc.claimsMap.given_name" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.claimsmap.name = displayName (Origin: "cas.authn.oidc.claimsMap.name" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.claimsmap.preferredusername = userid (Origin: "cas.authn.oidc.claimsMap.preferred_username" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.claimsmap.sub = id (Origin: "cas.authn.oidc.claimsMap.sub" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.claimsmap.updatedat = lastUpdated (Origin: "cas.authn.oidc.claimsMap.updated_at" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.core.jwksfile = file:///data/cas/oidc.jwks (Origin: "cas.authn.oidc.core.jwksFile" from property source "bootstrapProperties-applicationProfilesCompositeProperties")
+
+	cas.authn.oidc.userdefinedscopes.ala = organisation, city, state, country (Origin: "cas.authn.oidc.userDefinedScopes.ala" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.oidc.userdefinedscopes.roles = role, authority (Origin: "cas.authn.oidc.userDefinedScopes.roles" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.authn.pac4j.typedidused = true (Origin: "cas.authn.pac4j.typedIdUsed" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.attributeresolution.enabled = true (Origin: "cas.monitor.endpoints.attributeResolution.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.auditevents.enabled = true (Origin: "cas.monitor.endpoints.auditEvents.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.authenticationevents.enabled = true (Origin: "cas.monitor.endpoints.authenticationEvents.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.configurationmetadata.enabled = true (Origin: "cas.monitor.endpoints.configurationMetadata.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.configurationstate.enabled = true (Origin: "cas.monitor.endpoints.configurationState.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.dashboard.enabled = true (Origin: "cas.monitor.endpoints.dashboard.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.discovery.enabled = true (Origin: "cas.monitor.endpoints.discovery.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.enabled = true (Origin: "cas.monitor.endpoints.enabled" from property source "bootstrapProperties-applicationProfilesCompositeProperties")
+
+	cas.monitor.endpoints.healthcheck.enabled = true (Origin: "cas.monitor.endpoints.healthCheck.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.loggingconfig.enabled = true (Origin: "cas.monitor.endpoints.loggingConfig.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.metrics.enabled = true (Origin: "cas.monitor.endpoints.metrics.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.registeredservicesreport.enabled = true (Origin: "cas.monitor.endpoints.registeredServicesReport.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.sensitive = true (Origin: "cas.monitor.endpoints.sensitive" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.singlesignonreport.enabled = true (Origin: "cas.monitor.endpoints.singleSignOnReport.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.singlesignonstatus.enabled = true (Origin: "cas.monitor.endpoints.singleSignOnStatus.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.springwebflowreport.enabled = true (Origin: "cas.monitor.endpoints.springWebflowReport.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.statistics.enabled = true (Origin: "cas.monitor.endpoints.statistics.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.status.enabled = true (Origin: "cas.monitor.endpoints.status.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.monitor.endpoints.trusteddevices.enabled = true (Origin: "cas.monitor.endpoints.trustedDevices.enabled" from property source "bootstrapProperties-embeddedYamlOverriddenCompositeProperties")
+
+	cas.serviceregistry.initfromjson = true (Origin: "cas.serviceRegistry.initFromJson" from property source "bootstrapProperties-applicationProfilesCompositeProperties")
+
+Listed settings above are no longer recognized by CAS 6.4.1. They may have been renamed, removed, or relocated to a new namespace in the CAS configuration schema. CAS will ignore such settings to proceed with its normal initialization sequence. Please consult the CAS documentation to review and adjust each setting to find an alternative or remove the definition from the property source. Failure to do so puts the server stability in danger and complicates future upgrades.
+>
+2021-11-12 00:52:27,541 DEBUG [au.org.ala.cas.jndi.AlaTomcatContainerFactoryConfiguration$casServletWebServerFactory$1] - <Code archive: /home/bea18c/dev/github/Atlas/ala-cas-5/target/cas-exec.war>
+2021-11-12 00:52:27,541 DEBUG [au.org.ala.cas.jndi.AlaTomcatContainerFactoryConfiguration$casServletWebServerFactory$1] - <Document root: /home/bea18c/dev/github/Atlas/ala-cas-5/target/cas-exec.war>
+2021-11-12 00:52:27,585 INFO [org.springframework.boot.web.embedded.tomcat.TomcatWebServer] - <Tomcat initialized with port(s): 8080 (http)>
+
