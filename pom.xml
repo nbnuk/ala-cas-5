@@ -3,11 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd ">
 
-<!--    <parent>-->
-<!--        <groupId>au.org.ala</groupId>-->
-<!--        <artifactId>ala-parent-pom</artifactId>-->
-<!--        <version>15</version>-->
-<!--    </parent>-->
+    <parent>
+        <groupId>au.org.ala</groupId>
+        <artifactId>ala-parent-pom</artifactId>
+        <version>14</version>
+    </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>au.org.ala</groupId>
@@ -181,6 +181,11 @@
                         <goals> <goal>testCompile</goal> </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.21</version>
             </plugin>
 <!--            <plugin>-->
 <!--                <artifactId>maven-surefire-plugin</artifactId>-->
@@ -850,6 +855,7 @@
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <targetJdk>11</targetJdk>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ssZ</maven.build.timestamp.format>
