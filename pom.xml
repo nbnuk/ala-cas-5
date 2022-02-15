@@ -111,7 +111,6 @@
                             <excludes>
                                 <exclude>WEB-INF/classes/services/*.json</exclude>
                                 <exclude>WEB-INF/lib/mongo-java-driver-3.4.3.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-*.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -681,32 +680,6 @@
             <version>8.0.26</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- override log4j version -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-jcl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-web</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
         <!-- Here be webjars -->
         <dependency>
             <groupId>org.webjars</groupId>
@@ -877,8 +850,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ssZ</maven.build.timestamp.format>
-
-        <log4j.version>2.17.0</log4j.version>
     </properties>
 
     <repositories>
