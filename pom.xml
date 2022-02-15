@@ -182,14 +182,14 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
-<!--                <version>2.22.1</version>-->
-                <configuration>
-                    <jvm>${env.JAVA_HOME}/bin/java</jvm>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>3.0.0-M5</version>-->
+<!--&lt;!&ndash;                <version>2.22.1</version>&ndash;&gt;-->
+<!--                <configuration>-->
+<!--                    <jvm>${env.JAVA_HOME}/bin/java</jvm>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
         <finalName>cas</finalName>
     </build>
@@ -771,11 +771,6 @@
             <artifactId>cas-server-support-thymeleaf</artifactId>
             <version>${cas.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apereo.cas</groupId>-->
-<!--            <artifactId>cas-server-core-cookie</artifactId>-->
-<!--            <version>${cas.version}</version>-->
-<!--        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
             <groupId>org.json</groupId>
