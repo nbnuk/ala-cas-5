@@ -1,7 +1,7 @@
 package au.org.ala.cas.webflow
 
 import au.org.ala.utils.logger
-import org.hibernate.validator.constraints.NotBlank
+import jakarta.validation.constraints.NotBlank
 import org.springframework.binding.message.MessageBuilder
 import org.springframework.binding.validation.ValidationContext
 import java.io.Serializable

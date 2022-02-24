@@ -6,4 +6,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=au.org.ala.cas.jn
   au.org.ala.cas.events.AlaEventsConfiguration,\
   au.org.ala.cas.mongo.MongoIndexConfiguration,\
   au.org.ala.cas.session.MongoSpringSessionConfiguration,\
-  au.org.ala.cas.flyway.AlaFlywayConfiguration
+  au.org.ala.cas.flyway.AlaFlywayConfiguration,\
+  au.org.ala.cas.oidc.OidcConfiguration

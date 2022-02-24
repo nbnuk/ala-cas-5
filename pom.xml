@@ -14,7 +14,7 @@
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
     <!-- Version should ${cas.version}-${ala.build.version}(-SNAPSHOT)? -->
-    <version>6.4.5-1-SNAPSHOT</version>
+    <version>6.5.0-1-SNAPSHOT</version>
 
     <name>ALA CAS</name>
     <description>ALA Central Authentication Service</description>
@@ -68,6 +68,7 @@
                     <addResources>true</addResources>
                     <classifier>exec</classifier>
                     <executable>${isExecutable}</executable>
+                    <layout>WAR</layout>
                     <!--<executable>true</executable>-->
                     <!-- spring boot will add all provided dependencies in a lib-provided dir but the war
                          overlay is unnecessary as it will be unpacked and included in the war anyway -->
@@ -224,11 +225,11 @@
                 <version>${kotlin.version}</version>
             </dependency>
             <!-- Use latest point release -->
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-starter-client</artifactId>
-                <version>1.5.7</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>de.codecentric</groupId>-->
+<!--                <artifactId>spring-boot-admin-starter-client</artifactId>-->
+<!--                <version>2.4.4</version> &lt;!&ndash; TODO &ndash;&gt;-->
+<!--            </dependency>-->
             <!-- manage pac4j into compile scope -->
             <dependency>
                 <groupId>org.pac4j</groupId>
@@ -267,6 +268,31 @@
             <dependency>
                 <groupId>org.apereo.cas</groupId>
                 <artifactId>cas-server-support-oauth-core</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oauth-core-api</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oidc-core</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oidc-core-api</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oidc-services</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-token-core-api</artifactId>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -381,7 +407,6 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>7.15.0</version>
-<!--            <version>4.2.0</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -419,9 +444,8 @@
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
-<!--            mongodb-driver-core-4.3.1-->
             <artifactId>mongodb-driver-sync</artifactId>
-            <version>4.3.1</version>
+            <version>4.4.2</version>
         </dependency>
         <dependency>
             <groupId>org.apereo.cas</groupId>
@@ -448,6 +472,21 @@
         <dependency>
             <groupId>org.apereo.cas</groupId>
             <artifactId>cas-server-support-oidc</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-core-services-api</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-oauth-services</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-oidc-services</artifactId>
             <version>${cas.version}</version>
         </dependency>
         <dependency>
@@ -691,7 +730,7 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.26</version>
-            <scope>runtime</scope>
+<!--            <scope>runtime</scope>-->
         </dependency>
         <!-- Here be webjars -->
         <dependency>
@@ -740,10 +779,10 @@
             <!--<artifactId>jQuery-Autocomplete</artifactId>-->
             <!--<version>1.2.7</version>-->
         <!--</dependency>-->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>headjs</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.webjars</groupId>-->
+<!--            <artifactId>headjs</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
@@ -788,6 +827,13 @@
             <version>${cas.version}</version>
         </dependency>
 
+        <!--  6.5 upgrade -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>7.0.2.Final</version>
+        </dependency>
+
 
         <!-- Spring Session for distributing the session because delegated auth requires a session -->
         <!-- Use Mongo instead of Redis for spring session -->
@@ -817,7 +863,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.14</version>
             <scope>provided</scope>
         </dependency>
 
@@ -837,8 +883,8 @@
     </dependencies>
 
     <properties>
-        <cas.version>6.4.5</cas.version>
-        <springboot.version>2.5.4</springboot.version>
+        <cas.version>6.5.0</cas.version>
+        <springboot.version>2.6.3</springboot.version>
         <!-- app.server could be -jetty, -undertow, -tomcat, or blank if you plan to provide appserver -->
         <!-- we use blank to create a blank war and spring boot repackage to build an executable Tomcat jar -->
         <app.server></app.server>
@@ -850,7 +896,7 @@
         <!--<isExecutable>false</isExecutable>-->
         <!--<manifestFileToUse>${project.build.directory}/war/work/org.apereo.cas/cas-server-webapp${app.server}/META-INF/MANIFEST.MF</manifestFileToUse>-->
 
-        <kotlin.version>1.5.31</kotlin.version>
+        <kotlin.version>1.6.10</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <maven.compiler.source>11</maven.compiler.source>
