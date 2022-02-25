@@ -17,7 +17,7 @@
                class="btn btn-block btn-social mb-1"
                th:classappend="${#strings.replace(#messages.msg('cas.authn.pac4j.class.' + entry.name), 'cas.authn.pac4j.class.' + entry.name, 'btn-' + entry.name)}"
                th:href="@{${entry.redirectUrl}}"
-               th:attr="autoredirect=${entry.autoRedirect}"
+               th:attr="autoRedirectType=${#strings.toLowerCase(entry.autoRedirectType)}"
                th:inline="text"
                th:title="${#strings.replace(#messages.msg('cas.authn.pac4j.title.' + entry.name), 'cas.authn.pac4j.title.' + entry.name, entry.name)}">
 
@@ -32,8 +32,7 @@
                 <span th:case="dropbox" class="fab fa-dropbox"></span>
                 <span th:case="linkedin" class="fab fa-linkedin"></span>
                 <span th:case="facebook" class="fab fa-facebook-square"></span>
-                <span th:case="oidc" th:class="${entry.name}"></span>
-<!--                <span th:case="oidc" th:class="${#strings.replace(#messages.msg('cas.authn.pac4j.btn.class.' + entry.name), 'cas.authn.pac4j.btn.class.' + entry.name, entry.cssClass)}"></span>-->
+                <span th:case="oidc" th:class="${#strings.replace(#messages.msg('cas.authn.pac4j.btn.class.' + entry.name), 'cas.authn.pac4j.btn.class.' + entry.name, #strings.defaultString(entry.cssClass,'fab fa-openid'))}"></span>
                 <span th:case="saml2" th:class="${entry.cssClass}"></span>
                 <span th:case="*" class="fa fa-sign-in-alt"></span>
 
@@ -43,8 +42,8 @@
 
         </div>
         <script>
-            var redirectTo = $( "a[autoRedirect=true]" ).attr("href");
-            if (redirectTo != null && redirectTo != undefined) {
+            const redirectTo = $("a[autoRedirectType=client]").attr("href");
+            if (redirectTo !== null && redirectTo !== undefined) {
                 window.location.href = redirectTo;
             }
         </script>
