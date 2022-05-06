@@ -1,12 +1,19 @@
 package au.org.ala.cas.delegated
 
 import au.org.ala.cas.AlaCasProperties
+import au.org.ala.utils.logger
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.github.scribejava.core.model.OAuth1RequestToken
 import org.apereo.cas.authentication.principal.PrincipalFactory
 import org.apereo.cas.authentication.principal.PrincipalResolver
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils
 import org.apereo.cas.configuration.support.JpaBeans
+import org.apereo.cas.ticket.TransientSessionTicket
+import org.apereo.cas.ticket.TransientSessionTicketImpl
+import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlan
+import org.apereo.cas.ticket.serialization.serializers.TransientSessionTicketStringSerializer
 import org.apereo.services.persondir.IPersonAttributeDao
-import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl
 import org.pac4j.core.client.Clients
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -21,6 +28,9 @@ import javax.annotation.PostConstruct
 @Configuration
 @EnableConfigurationProperties(AlaCasProperties::class)
 class AlaPac4jAuthenticationConfiguration {
+    companion object {
+        val log = logger()
+    }
 
     @Autowired
     lateinit var applicationContext: ApplicationContext
@@ -30,6 +40,9 @@ class AlaPac4jAuthenticationConfiguration {
 
     @Autowired
     lateinit var clients: Clients
+
+    @Autowired
+    lateinit var ticketSerializationExecutionPlan: TicketSerializationExecutionPlan
 
     @Bean
     @Qualifier("userCreatorDataSource")
@@ -57,10 +70,31 @@ class AlaPac4jAuthenticationConfiguration {
     // TODO How to replicate this?
     @PostConstruct
     fun sortClients() {
+        log.info("Sorting clients")
         this.clients.findAllClients()?.sortBy { client ->
             val idx = alaCasProperties.clientSortOrder.indexOf(client.name)
             if (idx == -1) alaCasProperties.clientSortOrder.size else idx
         }
+        log.info("Sorted clients: {}", clients.clients)
     }
+
+    @PostConstruct
+    fun updateTickets() {
+        log.info("Updating ticket plans to fix CAS bugs")
+        val serializer = ticketSerializationExecutionPlan.getTicketSerializer(TransientSessionTicketImpl::class.java)
+        if (serializer is TransientSessionTicketStringSerializer) {
+            serializer.objectMapper.addMixIn(OAuth1RequestToken::class.java, OAuth1RequestTokenMixin::class.java)
+        } else {
+            log.warn("TST serializer {} is not TransientSessionTicketStringSerializer :(", serializer)
+        }
+    }
+
+}
+
+abstract class OAuth1RequestTokenMixin @JsonCreator constructor(
+    @JsonProperty("token") token: String,
+    @JsonProperty("tokenSecret") tokenSecret: String,
+    @JsonProperty("oauthCallbackConfirmed") oauthCallbackConfirmed: Boolean,
+    @JsonProperty("rawResponse") rawResponse: String?) {
 
 }

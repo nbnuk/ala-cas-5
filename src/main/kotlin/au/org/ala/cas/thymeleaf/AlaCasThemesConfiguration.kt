@@ -37,7 +37,8 @@ class AlaCasThemesConfiguration {
         val log = logger()
 
         @JvmStatic
-        fun configureThymeleafViewResolver(thymeleafViewResolver: ThymeleafViewResolver, alaCasProperties: AlaCasProperties) {
+        fun applySkinProperties(alaCasProperties: AlaCasProperties,
+                                action: (String, Any) -> Unit) {
             mapOf(
                 BASE_URL to alaCasProperties.skin.baseUrl,
                 TERMS_URL to alaCasProperties.skin.termsUrl,
@@ -54,7 +55,7 @@ class AlaCasThemesConfiguration {
                 ALA_UI_VERSION to "ala-ui-${alaCasProperties.skin.uiVersion}",
                 LOGIN_LOGO to alaCasProperties.skin.loginLogo,
                 ALA_PROPERTIES to alaCasProperties
-            ).forEach(thymeleafViewResolver::addStaticVariable)
+            ).forEach(action)
         }
     }
 
@@ -65,12 +66,11 @@ class AlaCasThemesConfiguration {
     fun alaThymeleafViewResolverConfigurer() = object : CasThymeleafViewResolverConfigurer {
         override fun configureThymeleafViewResolver(resolver: ThymeleafViewResolver) {
             log.info("Configuring thymeleaf view resolver with ALA customisations")
-            configureThymeleafViewResolver(resolver, alaCasProperties)
-
+            applySkinProperties(alaCasProperties, resolver::addStaticVariable)
         }
 
         override fun configureThymeleafView(thymeleafView: AbstractThymeleafView) {
-
+            applySkinProperties(alaCasProperties, thymeleafView::addStaticVariable)
         }
     }
 
