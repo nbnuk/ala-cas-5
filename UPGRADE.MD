@@ -8,9 +8,10 @@ Upgrade notes from CAS 5.3 to 6.4
 2. Fix application.yml config keys:
     - endpoints...
     - spring.endpoints?
+3. Create a Mongo database for Spring Sessions, eg spring-sessions and assign the CAS mongo user readWrite access to it.
 
-3. Update cas-service-registry in mongo: `db.services.update({ "multifactorPolicy.failureMode": "NOT_SET"}, { $set: { "multifactorPolicy.failureMode": "UNDEFINED" } }, { multi: true });`
-4. Remove existing tickets in mongo (optionally, drop collections as well):
+4. Update cas-service-registry in mongo: `db.services.update({ "multifactorPolicy.failureMode": "NOT_SET"}, { $set: { "multifactorPolicy.failureMode": "UNDEFINED" } }, { multi: true });`
+5. Remove existing tickets in mongo (optionally, drop collections as well):
 ```javascript
     db.ticketGrantingTicketsCollection.remove({})
     db.serviceTicketsCollection.remove({})
