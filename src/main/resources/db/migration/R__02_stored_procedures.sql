@@ -3,6 +3,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_user_attributes`(p_username varchar(255))
   BEGIN
     SELECT 'email' AS 'key', email AS 'value' FROM users WHERE username=p_username
+    UNION SELECT 'username' AS 'key', username AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'firstname' AS 'key', firstname AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'givenName' AS 'key', firstname AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'lastname' AS 'key', lastname AS 'value' FROM users WHERE username=p_username
