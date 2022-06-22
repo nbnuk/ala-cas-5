@@ -27,3 +27,4 @@ Upgrade notes from CAS 5.3 to 6.4
 This is to prevent the ticket cleaner from crashing.  To keep tickets, need to figure out the change in date format and
 write a script to update it on all tickets.
 6. Update log4j config, make Spring Boot logger sync instead of async so that startup failures are logged.
+7. Check attributes stored procedure can be called after flyway runs (test threw a non matching collations error)

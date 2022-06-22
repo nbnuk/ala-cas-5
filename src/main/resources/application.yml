@@ -345,7 +345,8 @@ ala:
     rememberMeMaxAge: ${cas.tgc.rememberMeMaxAge}
     name: ALA-Auth
     path: /
-    secure: false
+    secure: true
+    sameSitePolicy: Lax
     quoteValue: true
     urlEncodeValue: false
   userCreator:
