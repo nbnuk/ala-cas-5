@@ -8,6 +8,7 @@ CREATE PROCEDURE `sp_get_user_attributes`(p_username varchar(255))
     UNION SELECT 'givenName' AS 'key', firstname AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'lastname' AS 'key', lastname AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'sn' AS 'key', lastname AS 'value' FROM users WHERE username=p_username
+    UNION SELECT 'displayName' AS 'key', CONCAT_WS(' ', firstname, lastname) AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'userid' AS 'key', cast(userid AS char) AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'id' AS 'key', cast(userid AS char) AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'authority' AS 'key', group_concat(a.role_id) AS 'value' FROM user_role a JOIN users u ON a.user_id=u.userid WHERE u.username=p_username HAVING value IS NOT NULL
