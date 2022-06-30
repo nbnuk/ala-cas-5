@@ -256,6 +256,10 @@ cas:
         range-seconds: 10
         threshold: 5
   monitor:
+    endpoints:
+      endpoint:
+        health:
+          access: PERMIT, ANONYMOUS
     jdbc:
       dataSourceName: java:comp/env/jdbccas
       driverClass: com.mysql.cj.jdbc.Driver
@@ -334,6 +338,26 @@ cas:
   messageBundle:
     baseNames: file:///var/opt/atlas/i18n/cas/messages,file:///opt/atlas/i18n/cas/messages,classpath:other_messages,classpath:custom_messages,classpath:messages
 
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      defaults:
+        enabled: true
+      jdbc:
+        enabled: true
+      mongo:
+        enabled: true
+    web:
+      base-path: "/actuator"
+      exposure:
+        include:
+          - health
+          - info
 
 # Override these for non-ALA deployments
 ala:

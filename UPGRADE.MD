@@ -28,3 +28,5 @@ This is to prevent the ticket cleaner from crashing.  To keep tickets, need to f
 write a script to update it on all tickets.
 6. Update log4j config, make Spring Boot logger sync instead of async so that startup failures are logged.
 7. Check attributes stored procedure can be called after flyway runs (test threw a non matching collations error)
+8. Check FB, Google, Twitter, AAF callback URLs
+9. Check load balancer has correct actuator health endpoints

@@ -12,7 +12,10 @@ import org.apereo.cas.ticket.registry.TicketHolder
 import org.apereo.cas.ticket.registry.TicketRegistry
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.actuate.mongo.MongoHealthIndicator
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -31,13 +34,27 @@ class MongoIndexConfiguration {
     }
 
     @Autowired
+    @Qualifier("mongoDbTicketRegistryTemplate")
     lateinit var mongoDbTicketRegistryTemplate: MongoTemplate
+
+    @Autowired
+    @Qualifier("mongoDbServiceRegistryTemplate")
+    lateinit var mongoDbServiceRegistryTemplate: MongoTemplate
 
     @Autowired
     lateinit var ticketRegistry: TicketRegistry
 
     @Autowired
     lateinit var ticketCatalog: TicketCatalog
+
+    @Bean
+    fun mongoDbTicketRegistryTemplateIndicator(): MongoHealthIndicator {
+        return MongoHealthIndicator(mongoDbTicketRegistryTemplate)
+    }
+    @Bean
+    fun mongoDbServiceRegistryTemplateIndicator(): MongoHealthIndicator {
+        return MongoHealthIndicator(mongoDbServiceRegistryTemplate)
+    }
 
     @PostConstruct
     fun initMongoIndices() {
