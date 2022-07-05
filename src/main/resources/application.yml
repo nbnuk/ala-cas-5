@@ -83,7 +83,7 @@ cas:
         maximum-cache-size: 1000 #TODO TUNING
         merger: REPLACE
 # Attributes that you wish to resolve for the principal
-        defaultAttributesToRelease: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,legacyPassword,created,lastLogin
+        defaultAttributesToRelease: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,created,lastLogin
       jdbc:
         - dataSourceName: java:comp/env/jdbccas
           driverClass: com.mysql.cj.jdbc.Driver
