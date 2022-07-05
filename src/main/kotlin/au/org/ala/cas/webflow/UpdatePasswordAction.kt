@@ -4,7 +4,7 @@ import au.org.ala.cas.AlaCasProperties
 import au.org.ala.cas.alaUserId
 import au.org.ala.cas.booleanAttribute
 import au.org.ala.utils.logger
-import org.apereo.cas.authentication.UsernamePasswordCredential
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential
 import org.apereo.cas.web.support.WebUtils
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager

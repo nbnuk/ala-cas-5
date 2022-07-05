@@ -10,14 +10,14 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <!--<groupId>au.org.ala</groupId>-->
+    <groupId>au.org.ala</groupId>
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
     <!-- Version should ${cas.version}-${ala.build.version}(-SNAPSHOT)? -->
-    <version>5.3.12-5</version>
+    <version>6.5.6-1</version>
 
-    <name>ALA CAS 5</name>
-    <description>ALA Central Authentication Service v5</description>
+    <name>ALA CAS</name>
+    <description>ALA Central Authentication Service</description>
     <scm>
         <connection>scm:git:https://github.com/AtlasOfLivingAustralia/ala-cas-5.git</connection>
         <url>https://github.com/AtlasOfLivingAustralia/ala-cas-5</url>
@@ -68,6 +68,7 @@
                     <addResources>true</addResources>
                     <classifier>exec</classifier>
                     <executable>${isExecutable}</executable>
+                    <layout>WAR</layout>
                     <!--<executable>true</executable>-->
                     <!-- spring boot will add all provided dependencies in a lib-provided dir but the war
                          overlay is unnecessary as it will be unpacked and included in the war anyway -->
@@ -111,7 +112,6 @@
                             <excludes>
                                 <exclude>WEB-INF/classes/services/*.json</exclude>
                                 <exclude>WEB-INF/lib/mongo-java-driver-3.4.3.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-*.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -125,6 +125,9 @@
                     <compilerPlugins>
                         <plugin>spring</plugin>
                     </compilerPlugins>
+                    <args>
+                        <arg>-java-parameters</arg>
+                    </args>
                 </configuration>
                 <executions>
                     <execution>
@@ -183,6 +186,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.21</version>
+            </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>3.0.0-M5</version>-->
+<!--&lt;!&ndash;                <version>2.22.1</version>&ndash;&gt;-->
+<!--                <configuration>-->
+<!--                    <jvm>${env.JAVA_HOME}/bin/java</jvm>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
         <finalName>cas</finalName>
     </build>
@@ -212,11 +228,11 @@
                 <version>${kotlin.version}</version>
             </dependency>
             <!-- Use latest point release -->
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-starter-client</artifactId>
-                <version>1.5.7</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>de.codecentric</groupId>-->
+<!--                <artifactId>spring-boot-admin-starter-client</artifactId>-->
+<!--                <version>2.4.4</version> &lt;!&ndash; TODO &ndash;&gt;-->
+<!--            </dependency>-->
             <!-- manage pac4j into compile scope -->
             <dependency>
                 <groupId>org.pac4j</groupId>
@@ -255,6 +271,31 @@
             <dependency>
                 <groupId>org.apereo.cas</groupId>
                 <artifactId>cas-server-support-oauth-core</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oauth-core-api</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oidc-core</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oidc-core-api</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-oidc-services</artifactId>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apereo.cas</groupId>
+                <artifactId>cas-server-support-token-core-api</artifactId>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -368,7 +409,7 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>4.2.0</version>
+            <version>7.15.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -406,8 +447,7 @@
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-<!--            <version>3.8.2</version>-->
+            <artifactId>mongodb-driver-sync</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apereo.cas</groupId>
@@ -416,16 +456,16 @@
             <scope>compile</scope>
         </dependency>
         <!-- Allows spring security basic auth for actuator endpoints -->
-        <dependency>
-            <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-webapp-config-security</artifactId>
-            <version>${cas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-support-bootadmin-client</artifactId>
-            <version>${cas.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apereo.cas</groupId>-->
+<!--            <artifactId>cas-server-webapp-config-security</artifactId>-->
+<!--            <version>${cas.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.apereo.cas</groupId>-->
+<!--            <artifactId>cas-server-support-bootadmin-client</artifactId>-->
+<!--            <version>${cas.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.apereo.cas</groupId>
             <artifactId>cas-server-support-oauth-webflow</artifactId>
@@ -434,6 +474,21 @@
         <dependency>
             <groupId>org.apereo.cas</groupId>
             <artifactId>cas-server-support-oidc</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-core-services-api</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-oauth-services</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-oidc-services</artifactId>
             <version>${cas.version}</version>
         </dependency>
         <dependency>
@@ -618,12 +673,12 @@
             <version>${cas.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-support-configuration</artifactId>
-            <version>${cas.version}</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apereo.cas</groupId>-->
+<!--            <artifactId>cas-server-support-configuration</artifactId>-->
+<!--            <version>${cas.version}</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.apereo.cas</groupId>
             <artifactId>cas-server-support-geolocation</artifactId>
@@ -676,47 +731,24 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.26</version>
-            <scope>runtime</scope>
-        </dependency>
-        <!-- override log4j version -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-jcl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-web</artifactId>
-            <version>${log4j.version}</version>
+            <version>8.0.29</version>
+<!--            <scope>runtime</scope>-->
         </dependency>
         <!-- Here be webjars -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
+            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery-ui</artifactId>
+            <version>1.12.1</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery-cookie</artifactId>
+            <version>1.4.1-1</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
@@ -749,10 +781,10 @@
             <!--<artifactId>jQuery-Autocomplete</artifactId>-->
             <!--<version>1.2.7</version>-->
         <!--</dependency>-->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>headjs</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.webjars</groupId>-->
+<!--            <artifactId>headjs</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
@@ -760,6 +792,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>zxcvbn</artifactId>
+            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
@@ -767,28 +800,72 @@
             <version>5.0.0</version>
         </dependency>
 
-        <!-- Spring Session for distributing the session because delegated auth requires a session -->
+        <!-- Extra deps required for 6.4 upgrade -->
+        <!-- Hikari -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>${springboot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-jpa-util</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-thymeleaf</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-webapp-init-tomcat</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+
+        <!--  6.5 upgrade -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>7.0.2.Final</version>
+        </dependency>
+
+
+        <!-- Spring Session for distributing the session because delegated auth requires a session -->
+        <!-- Use Mongo instead of Redis for spring session -->
+<!--        <dependency>-->
+<!--            <groupId>org.apereo.cas</groupId>-->
+<!--            <artifactId>cas-server-support-session-mongo</artifactId>-->
+<!--            <version>${cas.version}</version>-->
+<!--        </dependency>-->
+        <!-- Above disabled to provide our own config so we can disable spring sesion with a config property -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-mongodb</artifactId>
+            <version>2.6.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-data-redis</artifactId>
-            <version>1.3.2.RELEASE</version>
+            <artifactId>spring-session-core</artifactId>
+            <version>2.6.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>3.3.4</version>
+        </dependency>
+
         <!-- Lombok for the CAS sources -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
 
@@ -796,6 +873,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -807,8 +885,8 @@
     </dependencies>
 
     <properties>
-        <cas.version>5.3.12.ALA</cas.version>
-        <springboot.version>1.5.18.RELEASE</springboot.version>
+        <cas.version>6.5.6</cas.version>
+        <springboot.version>2.6.3</springboot.version>
         <!-- app.server could be -jetty, -undertow, -tomcat, or blank if you plan to provide appserver -->
         <!-- we use blank to create a blank war and spring boot repackage to build an executable Tomcat jar -->
         <app.server></app.server>
@@ -820,16 +898,15 @@
         <!--<isExecutable>false</isExecutable>-->
         <!--<manifestFileToUse>${project.build.directory}/war/work/org.apereo.cas/cas-server-webapp${app.server}/META-INF/MANIFEST.MF</manifestFileToUse>-->
 
-        <kotlin.version>1.3.41</kotlin.version>
+        <kotlin.version>1.6.21</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <targetJdk>11</targetJdk>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ssZ</maven.build.timestamp.format>
-
-        <log4j.version>2.17.0</log4j.version>
     </properties>
 
     <repositories>

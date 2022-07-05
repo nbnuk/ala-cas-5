@@ -5,6 +5,7 @@ import au.org.ala.cas.setSingleAttributeValue
 import au.org.ala.cas.stringAttribute
 import au.org.ala.utils.logger
 import org.apereo.cas.authentication.Authentication
+import org.apereo.services.persondir.IPersonAttributeDao
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl
 import org.springframework.context.MessageSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -22,7 +23,7 @@ class ExtraAttributesService(
     private val alaCasProperties: AlaCasProperties,
     private val dataSource: DataSource,
     transactionManager: DataSourceTransactionManager,
-    private val cachingAttributeRepository: CachingPersonAttributeDaoImpl,
+    private val cachingAttributeRepository: IPersonAttributeDao, //CachingPersonAttributeDaoImpl,
     private val messageSource: MessageSource
 ) {
 
@@ -57,7 +58,8 @@ class ExtraAttributesService(
                 // invalidate cache for the new user attributes
                 // TODO there must be a less coupled way of achieving this
 
-                email?.let { cachingAttributeRepository.removeUserAttributes(it) }
+                // TODO Re-enable attribute caching
+//                email?.let { cachingAttributeRepository.removeUserAttributes(it) }
             } catch (e: Exception) {
                 // If we can't set the properties, just log and move on
                 // because none of these properties are required.

@@ -2,27 +2,13 @@ package au.org.ala.cas.thymeleaf
 
 import au.org.ala.cas.AlaCasProperties
 import au.org.ala.utils.logger
-import org.apereo.cas.configuration.CasConfigurationProperties
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer
-import org.apereo.cas.services.web.ThemeViewResolver
-import org.apereo.cas.services.web.ThemeViewResolverFactory
-import org.apereo.cas.services.web.config.CasThemesConfiguration
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.config.BeanPostProcessor
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.DependsOn
-import org.springframework.core.Ordered
-import org.springframework.util.MimeType
-import org.thymeleaf.spring4.SpringTemplateEngine
-import org.thymeleaf.spring4.view.ThymeleafViewResolver
-import java.util.LinkedHashMap
+import org.thymeleaf.spring5.view.AbstractThymeleafView
+import org.thymeleaf.spring5.view.ThymeleafViewResolver
 
 /**
  * Inject all skin properties into all Thymeleaf templates as static variables
@@ -51,7 +37,8 @@ class AlaCasThemesConfiguration {
         val log = logger()
 
         @JvmStatic
-        fun configureThymeleafViewResolver(thymeleafViewResolver: ThymeleafViewResolver, alaCasProperties: AlaCasProperties) {
+        fun applySkinProperties(alaCasProperties: AlaCasProperties,
+                                action: (String, Any) -> Unit) {
             mapOf(
                 BASE_URL to alaCasProperties.skin.baseUrl,
                 TERMS_URL to alaCasProperties.skin.termsUrl,
@@ -68,7 +55,7 @@ class AlaCasThemesConfiguration {
                 ALA_UI_VERSION to "ala-ui-${alaCasProperties.skin.uiVersion}",
                 LOGIN_LOGO to alaCasProperties.skin.loginLogo,
                 ALA_PROPERTIES to alaCasProperties
-            ).forEach(thymeleafViewResolver::addStaticVariable)
+            ).forEach(action)
         }
     }
 
@@ -76,9 +63,15 @@ class AlaCasThemesConfiguration {
     lateinit var alaCasProperties: AlaCasProperties
 
     @Bean
-    fun alaThymeleafViewResolverConfigurer() = CasThymeleafViewResolverConfigurer { resolver ->
-        log.info("Configuring thymeleaf view resolver with ALA customisations")
-        configureThymeleafViewResolver(resolver, alaCasProperties)
+    fun alaThymeleafViewResolverConfigurer() = object : CasThymeleafViewResolverConfigurer {
+        override fun configureThymeleafViewResolver(resolver: ThymeleafViewResolver) {
+            log.info("Configuring thymeleaf view resolver with ALA customisations")
+            applySkinProperties(alaCasProperties, resolver::addStaticVariable)
+        }
+
+        override fun configureThymeleafView(thymeleafView: AbstractThymeleafView) {
+            applySkinProperties(alaCasProperties, thymeleafView::addStaticVariable)
+        }
     }
 
 }

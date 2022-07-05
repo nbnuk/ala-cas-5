@@ -3,12 +3,14 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_user_attributes`(p_username varchar(255))
   BEGIN
     SELECT 'email' AS 'key', email AS 'value' FROM users WHERE username=p_username
+    UNION SELECT 'username' AS 'key', username AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'firstname' AS 'key', firstname AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'givenName' AS 'key', firstname AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'lastname' AS 'key', lastname AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'sn' AS 'key', lastname AS 'value' FROM users WHERE username=p_username
-    UNION SELECT 'userid' AS 'key', cast(userid AS char) AS 'value' FROM users WHERE username=p_username
-    UNION SELECT 'id' AS 'key', cast(userid AS char) AS 'value' FROM users WHERE username=p_username
+    UNION SELECT 'displayName' AS 'key', CONCAT_WS(' ', firstname, lastname) AS 'value' FROM users WHERE username=p_username
+    UNION SELECT 'userid' AS 'key', cast(userid AS char CHARACTER SET 'utf8mb4') COLLATE 'utf8mb4_unicode_ci' AS 'value' FROM users WHERE username=p_username
+    UNION SELECT 'id' AS 'key', cast(userid AS char CHARACTER SET 'utf8mb4') COLLATE 'utf8mb4_unicode_ci' AS 'value' FROM users WHERE username=p_username
     UNION SELECT 'authority' AS 'key', group_concat(a.role_id) AS 'value' FROM user_role a JOIN users u ON a.user_id=u.userid WHERE u.username=p_username HAVING value IS NOT NULL
     UNION SELECT 'role' AS 'key', a.role_id AS 'value' FROM user_role a JOIN users u ON a.user_id=u.userid WHERE u.username=p_username
     UNION SELECT 'created' as 'key', date_created as 'value' FROM users WHERE username=p_username

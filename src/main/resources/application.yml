@@ -7,12 +7,29 @@ spring:
   application:
     name: "@pom.artifactId@"
   session:
+    enabled: false
     store-type: none
-    timeout: 28800
-    redis:
-      namespace: 'cas'
+#  data:
+#    mongodb:
+#      host: localhost
+#      port: 27017
+#      database: sessions
+#  session:
+#    store-type: none
+#    timeout: 28800
+#    redis:
+#      namespace: 'cas'
+  flyway:
+    table: schema_version
+    baseline-description: Previous CAS deployment schema #
+    baseline-version: 1 # version to start migration
+    baseline-on-migrate: true #
+    clean-on-validation-error: false # Warning ! Do not enable in production ! Whether to automatically call clean or not when a validation error occurs.
+    enabled: true # Enable flyway.
+    ignore-future-migrations: false #
+    locations: classpath:db/migration # locations of migrations scripts
+
 server:
-  use-forward-headers: true
   tomcat:
     remote_ip_header: x-forwarded-for
     port-header: x-forwarded-port
@@ -20,32 +37,7 @@ server:
     protocol-header-https-value: https
     # Add IPv6 localhost to default list
     internal-proxies: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1
-# FLYWAY (FlywayProperties)
-flyway:
-  baseline-description: Previous CAS deployment schema #
-  baseline-version: 1 # version to start migration
-  baseline-on-migrate: true #
-#  check-location: false # Check that migration scripts location exists.
-  clean-on-validation-error: false # Warning ! Do not enable in production ! Whether to automatically call clean or not when a validation error occurs.
-  enabled: true # Enable flyway.
-#  encoding: UTF-8 #
-  ignore-failed-future-migration: false #
-#  init-sqls: # SQL statements to execute to initialize a connection immediately after obtaining it.
-  locations: classpath:db/migration # locations of migrations scripts
-#  out-of-order: false # Allows migrations to be run "out of order". If you already have versions 1 and 3 applied, and now a version 2 is found, it will be applied too instead of being ignored.
-#  password: # JDBC password if you want Flyway to create its own DataSource
-#  placeholder-prefix: #
-#  placeholder-replacement: #
-#  placeholder-suffix: #
-#  placeholders.*: #
-#  schemas: # schemas to update
-#  sql-migration-prefix: V #
-#  sql-migration-separator: __ #
-#  sql-migration-suffix: .sql #
-#  table: #
-#  url: # JDBC url of the database to migrate. If not set, the primary configured data source is used.
-#  user: # Login user of the database to migrate.
-#  validate-on-migrate: true #
+  forward-headers-strategy: native
 
 jndi:
   hikari:
@@ -64,7 +56,8 @@ cas:
 #    watcherEnabled: true
 #    repeatInterval: 120000
 #    startDelay: 15000
-    initFromJson: true
+    core:
+      init-from-json: true
 #    json:
 #      location: classpath:/services
     mongo:
@@ -73,23 +66,24 @@ cas:
       userId: cas
       password: password
       socket-keep-alive: true
-    jpa:
-      driverClass: com.mysql.cj.jdbc.Driver
-      dialect: org.hibernate.dialect.MySQL57Dialect
-      ddlAuto: validate
-      healthQuery: /* ping */ SELECT
+#    jpa:
+#      driverClass: com.mysql.cj.jdbc.Driver
+#      dialect: org.hibernate.dialect.MySQL57Dialect
+#      ddlAuto: validate
+#      healthQuery: /* ping */ SELECT
   person-directory:
     return-null: true
   authn:
     accept:
       users: ''
     attribute-repository:
-      expirationTime: 5
-      expirationTimeUnit: MINUTES
-      maximumCacheSize: 1000 #TODO TUNING
-      merger: REPLACE
+      core:
+        expiration-time: 0
+        expiration-time-unit: MINUTES
+        maximum-cache-size: 1000 #TODO TUNING
+        merger: REPLACE
 # Attributes that you wish to resolve for the principal
-      defaultAttributesToRelease: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,legacyPassword,created,lastLogin
+        defaultAttributesToRelease: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,created,lastLogin
       jdbc:
         - dataSourceName: java:comp/env/jdbccas
           driverClass: com.mysql.cj.jdbc.Driver
@@ -106,6 +100,8 @@ cas:
           columnMappings:
             key: value
           attributes:
+            preferred_username: username
+            username: username
             userid: userid
             id: id
             givenName: givenName
@@ -152,7 +148,9 @@ cas:
           passwordEncoder:
             type: au.org.ala.cas.password.AlaPasswordEncoder
     pac4j:
-      typedIdUsed: true
+      core:
+        user-profile-view-type: FLAT
+        typedIdUsed: true
 #      autoRedirect: false
 #      name:
       facebook:
@@ -164,137 +162,108 @@ cas:
       twitter:
         includeEmail: true
     oauth:
-      userProfileViewType: FLAT
+#      userProfileViewType: FLAT
       access-token:
+        create-as-jwt: true
         maxTimeToLiveInSeconds: "PT8H"
         timeToKillInSeconds: "PT2H"
       refresh-token:
         timeToKillInSeconds: "P14D"
     oidc:
-      scopes:
-        - openid
-        - profile
-        - email
-        #- address
-        #- phone
-        - offline_access
-        - ala
-        - roles
-      claims: # This list is all the specified oidc claims plus ALA specific
-        - sub
-        - name
-        - preferred_username
-        - family_name
-        - given_name
-        - middle_name
-        - given_name
-        - profile
-        - picture
-        - nickname
-        - website
-        - zoneinfo
-        - locale
-        - updated_at
-        - birthdate
-        - email
-        - email_verified
-        - phone_number
-        - phone_number_verified
-        - address
-        - organisation
-        - role
-        - authority
-        - city  # TODO condense these into the address scope somehow?
-        - state
-        - country
-      userDefinedScopes:
-        ala: organisation, city, state, country #, primary_user_type, secondary_user_type
-        roles: role, authority
-      claimsMap:
-        sub: userid #	string	Subject - Identifier for the End-User at the Issuer.
-        name: displayName #	string	End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
-        given_name: givenName #	string	Given name(s) or first name(s) of the End-User. Note that in some cultures, people can have multiple given names; all can be present, with the names being separated by space characters.
-        family_name: sn #	string	Surname(s) or last name(s) of the End-User. Note that in some cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters.
-        #middle_name: middleName #	string	Middle name(s) of the End-User. Note that in some cultures, people can have multiple middle names; all can be present, with the names being separated by space characters. Also note that in some cultures, middle names are not used.
-        #nickname: nickname	# string	Casual name of the End-User that may or may not be the same as the given_name. For instance, a nickname value of Mike might be returned alongside a given_name value of Michael.
-        #preferred_username: email #	string	Shorthand name by which the End-User wishes to be referred to at the RP, such as janedoe or j.doe. This value MAY be any valid JSON string including special characters such as @, /, or whitespace. The RP MUST NOT rely upon this value being unique, as discussed in Section 2.5.3.
-        #profile: #	string	URL of the End-User's profile page. The contents of this Web page SHOULD be about the End-User.
-        #picture: #	string	URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG, JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD specifically reference a profile photo of the End-User suitable for displaying when describing the End-User, rather than an arbitrary photo taken by the End-User.
-        #website: #	string	URL of the End-User's Web page or blog. This Web page SHOULD contain information published by the End-User or an organization that the End-User is affiliated with.
-        email: email #	string	End-User's preferred e-mail address. Its value MUST conform to the RFC 5322 [RFC5322] addr-spec syntax. The RP MUST NOT rely upon this value being unique, as discussed in Section 2.5.3.
-        #email_verified: #	boolean	True if the End-User's e-mail address has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this e-mail address was controlled by the End-User at the time the verification was performed. The means by which an e-mail address is verified is context specific, and dependent upon the trust framework or contractual agreements within which the parties are operating.
-        #gender: #	string	End-User's gender. Values defined by this document are female and male. Other values MAY be used when neither of the defined values are applicable.
-        #birthdate: #	string	End-User's birthday, represented as an ISO 8601:2004 [ISO8601‑2004] YYYY-MM-DD format. The year MAY be 0000, indicating that it is omitted. To represent only the year, YYYY format is allowed. Note that depending on the underlying platform's date related function, providing just year can result in varying month and day, so the implementers need to take this factor into account to correctly process the dates.
-        # TODO add zoneinfo and locale
-        #zoneinfo: #	string	String from zoneinfo [zoneinfo] time zone database representing the End-User's time zone. For example, Europe/Paris or America/Los_Angeles.
-        #locale: #	string	End-User's locale, represented as a BCP47 [RFC5646] language tag. This is typically an ISO 639-1 Alpha-2 [ISO639‑1] language code in lowercase and an ISO 3166-1 Alpha-2 [ISO3166‑1] country code in uppercase, separated by a dash. For example, en-US or fr-CA. As a compatibility note, some implementations have used an underscore as the separator rather than a dash, for example, en_US; Relying Parties MAY choose to accept this locale syntax as well.
-        #phone_number	string	End-User's preferred telephone number. E.164 [E.164] is RECOMMENDED as the format of this Claim, for example, +1 (425) 555-1212 or +56 (2) 687 2400. If the phone number contains an extension, it is RECOMMENDED that the extension be represented using the RFC 3966 [RFC3966] extension syntax, for example, +1 (604) 555-1234;ext=5678.
-        #phone_number_verified	boolean	True if the End-User's phone number has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this phone number was controlled by the End-User at the time the verification was performed. The means by which a phone number is verified is context specific, and dependent upon the trust framework or contractual agreements within which the parties are operating. When true, the phone_number Claim MUST be in E.164 format and any extensions MUST be represented in RFC 3966 format.
-        #address	JSON object	End-User's preferred postal address. The value of the address member is a JSON [RFC4627] structure containing some or all of the members defined in Section 2.5.1.
-        #updated_at	number	Time the End-User's information was last updated. Its value is a JSON number representing the number of seconds from 1970-01-01T00:00:00Z as measured in UTC until the date/time.
+      core:
+        userDefinedScopes:
+          ala: userid, organisation, city, state, country #, primary_user_type, secondary_user_type
+          roles: role, authority
+          'users:read':
+          'users:write':
+          'ecodata:read':
+          'ecodata:write':
+          'biocache:read':
+          'biocache:write':
+          'ala:internal':
+        claimsMap:
+          sub: userid #	string	Subject - Identifier for the End-User at the Issuer.
+          name: displayName #	string	End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
+          given_name: givenName #	string	Given name(s) or first name(s) of the End-User. Note that in some cultures, people can have multiple given names; all can be present, with the names being separated by space characters.
+          family_name: sn #	string	Surname(s) or last name(s) of the End-User. Note that in some cultures, people can have multiple family names or no family name; all can be present, with the names being separated by space characters.
+          #middle_name: middleName #	string	Middle name(s) of the End-User. Note that in some cultures, people can have multiple middle names; all can be present, with the names being separated by space characters. Also note that in some cultures, middle names are not used.
+          #nickname: nickname	# string	Casual name of the End-User that may or may not be the same as the given_name. For instance, a nickname value of Mike might be returned alongside a given_name value of Michael.
+          preferred_username: username #	string	Shorthand name by which the End-User wishes to be referred to at the RP, such as janedoe or j.doe. This value MAY be any valid JSON string including special characters such as @, /, or whitespace. The RP MUST NOT rely upon this value being unique, as discussed in Section 2.5.3.
+          #profile: #	string	URL of the End-User's profile page. The contents of this Web page SHOULD be about the End-User.
+          #picture: #	string	URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG, JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD specifically reference a profile photo of the End-User suitable for displaying when describing the End-User, rather than an arbitrary photo taken by the End-User.
+          #website: #	string	URL of the End-User's Web page or blog. This Web page SHOULD contain information published by the End-User or an organization that the End-User is affiliated with.
+          email: email #	string	End-User's preferred e-mail address. Its value MUST conform to the RFC 5322 [RFC5322] addr-spec syntax. The RP MUST NOT rely upon this value being unique, as discussed in Section 2.5.3.
+          email_verified: activated #	boolean	True if the End-User's e-mail address has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this e-mail address was controlled by the End-User at the time the verification was performed. The means by which an e-mail address is verified is context specific, and dependent upon the trust framework or contractual agreements within which the parties are operating.
+          #gender: #	string	End-User's gender. Values defined by this document are female and male. Other values MAY be used when neither of the defined values are applicable.
+          #birthdate: #	string	End-User's birthday, represented as an ISO 8601:2004 [ISO8601‑2004] YYYY-MM-DD format. The year MAY be 0000, indicating that it is omitted. To represent only the year, YYYY format is allowed. Note that depending on the underlying platform's date related function, providing just year can result in varying month and day, so the implementers need to take this factor into account to correctly process the dates.
+          # TODO add zoneinfo and locale
+          #zoneinfo: #	string	String from zoneinfo [zoneinfo] time zone database representing the End-User's time zone. For example, Europe/Paris or America/Los_Angeles.
+          #locale: #	string	End-User's locale, represented as a BCP47 [RFC5646] language tag. This is typically an ISO 639-1 Alpha-2 [ISO639‑1] language code in lowercase and an ISO 3166-1 Alpha-2 [ISO3166‑1] country code in uppercase, separated by a dash. For example, en-US or fr-CA. As a compatibility note, some implementations have used an underscore as the separator rather than a dash, for example, en_US; Relying Parties MAY choose to accept this locale syntax as well.
+          #phone_number	string	End-User's preferred telephone number. E.164 [E.164] is RECOMMENDED as the format of this Claim, for example, +1 (425) 555-1212 or +56 (2) 687 2400. If the phone number contains an extension, it is RECOMMENDED that the extension be represented using the RFC 3966 [RFC3966] extension syntax, for example, +1 (604) 555-1234;ext=5678.
+          #phone_number_verified	boolean	True if the End-User's phone number has been verified; otherwise false. When this Claim Value is true, this means that the OP took affirmative steps to ensure that this phone number was controlled by the End-User at the time the verification was performed. The means by which a phone number is verified is context specific, and dependent upon the trust framework or contractual agreements within which the parties are operating. When true, the phone_number Claim MUST be in E.164 format and any extensions MUST be represented in RFC 3966 format.
+          #address	JSON object	End-User's preferred postal address. The value of the address member is a JSON [RFC4627] structure containing some or all of the members defined in Section 2.5.1.
+          updated_at: lastUpdated #	number	Time the End-User's information was last updated. Its value is a JSON number representing the number of seconds from 1970-01-01T00:00:00Z as measured in UTC until the date/time.
+      discovery:
+        scopes:
+          - openid
+          - profile
+          - email
+          - offline_access
+          - ala
+          - roles
+          - users:read
+          - users:write
+          - ecodata:read
+          - ecodata:write
+          - biocache:read
+          - biocache:write
+          - ala:internal
+        claims: # This list is all the specified oidc claims plus ALA specific
+          - sub
+          - name
+          - preferred_username
+          - family_name
+          - given_name
+#          - middle_name
+#          - given_name
+          - profile
+#          - picture
+#          - nickname
+#          - website
+#          - zoneinfo
+          - locale
+          - updated_at
+#          - birthdate
+          - email
+          - email_verified
+#          - phone_number
+#          - phone_number_verified
+#          - address
+          - organisation
+          - role
+          - authority
+          - city  # TODO condense these into the address scope somehow?
+          - state
+          - country
+        # Default algorithms minus none
+        id-token-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]
+        user-info-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]
+        request-object-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]
+      file-system:
+        jwks-file: file:/data/cas/keystore.jwks
     throttle:
       failure:
-        range-seconds: 30
-        threshold: 3
+        range-seconds: 10
+        threshold: 5
   monitor:
+    endpoints:
+      endpoint:
+        health:
+          access: PERMIT, ANONYMOUS
     jdbc:
       dataSourceName: java:comp/env/jdbccas
       driverClass: com.mysql.cj.jdbc.Driver
       validationQuery: /* ping */ SELECT 1
-    endpoints:
-      enabled: true
-      sensitive: true
-      dashboard:
-        enabled: true
-#        sensitive: true
-      auditEvents:
-        enabled: true
-#        sensitive: true
-      authenticationEvents:
-        enabled: true
-#        sensitive: false
-      configurationState:
-        enabled: true
-#        sensitive: false
-      healthCheck:
-        enabled: true
-#        sensitive: false
-      loggingConfig:
-        enabled: true
-#        sensitive: false
-      metrics:
-        enabled: true
-#        sensitive: false
-      attributeResolution:
-        enabled: true
-#        sensitive: false
-      singleSignOnReport:
-        enabled: true
-#        sensitive: false
-      statistics:
-        enabled: true
-#        sensitive: false
-      discovery:
-        enabled: true
-#        sensitive: false
-      trustedDevices:
-        enabled: true
-#        sensitive: false
-      status:
-        enabled: true
-#        sensitive: false
-      singleSignOnStatus:
-        enabled: true
-#        sensitive: false
-      springWebflowReport:
-        enabled: true
-#        sensitive: false
-      registeredServicesReport:
-        enabled: true
-#        sensitive: false
-      configurationMetadata:
-        enabled: true
-#        sensitive: false
   tgc:
     maxAge: 28800 # Same as TGT expiry
     secure: true
@@ -309,8 +278,9 @@ cas:
     default-theme-name: ala
   ticket:
     tgt:
-      maxTimeToLiveInSeconds: 28800 # PT8H
-      timeToKillInSeconds: 28800 # PT8H
+      primary:
+        maxTimeToLiveInSeconds: 28800 # PT8H
+        timeToKillInSeconds: 28800 # PT8H
       rememberMe:
         enabled: true
         timeToKillInSeconds: 7884000 # P3M
@@ -339,6 +309,9 @@ cas:
 #            key:
 #            keySize: 16
 #          alg: AES
+  view:
+    cas2:
+      v3-forward-compatible: true
   jdbc:
     showSql: false
 #  genDdl: true
@@ -359,14 +332,32 @@ cas:
     cors:
       enabled: true
       allowCredentials: true
-      allowOrigins:
-        - "*"
   # https://apereo.github.io/cas/5.0.x/installation/Configuration-Properties.html#message-bundles
   # Allow to override messages locally via /var/opt/atlas/i18n/cas
   # In custom_messages only text messages to translate via crowdin
   messageBundle:
     baseNames: file:///var/opt/atlas/i18n/cas/messages,file:///opt/atlas/i18n/cas/messages,classpath:other_messages,classpath:custom_messages,classpath:messages
 
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      defaults:
+        enabled: true
+      jdbc:
+        enabled: true
+      mongo:
+        enabled: true
+    web:
+      base-path: "/actuator"
+      exposure:
+        include:
+          - health
+          - info
 
 # Override these for non-ALA deployments
 ala:
@@ -378,7 +369,8 @@ ala:
     rememberMeMaxAge: ${cas.tgc.rememberMeMaxAge}
     name: ALA-Auth
     path: /
-    secure: false
+    secure: true
+    sameSitePolicy: Lax
     quoteValue: true
     urlEncodeValue: false
   userCreator:

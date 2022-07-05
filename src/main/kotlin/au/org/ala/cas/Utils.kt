@@ -31,27 +31,20 @@ fun singleStringAttributeValue(value: Any?): String? = when (value) {
 
 fun singleBooleanAttributeValue(value: Any?): Boolean? = when(value) {
     is Boolean -> value
-    is String -> setOf("1", "true", "t", "yes", "y").contains(value.toLowerCase())
+    is String -> setOf("1", "true", "t", "yes", "y").contains(value.lowercase())
     is Number -> value == 1
     is Collection<*> -> singleBooleanAttributeValue(value.firstOrNull())
     is Array<*> -> singleBooleanAttributeValue(value.firstOrNull())
     else -> null
 }
 
-fun MutableMap<String, Any?>.setSingleAttributeValue(name: String, value: Any?) {
+fun MutableMap<String, List<Any?>>.setSingleAttributeValue(name: String, value: Any?) {
     when(val oldValue = this[name]) {
         is MutableList<*> -> if (oldValue.size > 0) (oldValue as MutableList<Any?>)[0] = value else (oldValue as MutableCollection<Any?>).add(value)
-        is MutableCollection<*> -> {
-            oldValue.clear()
-            (oldValue as MutableCollection<Any?>).add(value)
-        }
         null -> {
             val list = LinkedList<Any?>()
             list.add(value)
             this[name] = list
-        }
-        else -> {
-            this[name] = value
         }
     }
 }
