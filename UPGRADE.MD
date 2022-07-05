@@ -30,3 +30,16 @@ write a script to update it on all tickets.
 7. Check attributes stored procedure can be called after flyway runs (test threw a non matching collations error)
 8. Check FB, Google, Twitter, AAF callback URLs
 9. Check load balancer has correct actuator health endpoints
+10. Drop this index from the services collection:
+```json
+	{
+		"v" : 2,
+		"unique" : true,
+		"key" : {
+			"serviceId" : 1
+		},
+		"name" : "serviceId_1",
+		"ns" : "cas-service-registry.services"
+	},
+
+```
