@@ -127,7 +127,7 @@ cas:
     jdbc:
       query:
         - dataSourceName: java:comp/env/jdbccas
-          sql: SELECT p.password as password, u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, FALSE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND u.activated = 1 AND p.status = 'CURRENT' AND p.type = 'bcrypt' WHERE u.username = ?;
+          sql: SELECT p.password as password, not u.activated or u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, FALSE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND p.status = 'CURRENT' AND p.type = 'bcrypt' WHERE u.username = ?;
           fieldPassword: password
           fieldDisabled: disabled
 #          fieldExpired: expired
@@ -139,7 +139,7 @@ cas:
             characterEncoding: UTF-8
             strength: 10
         - dataSourceName: java:comp/env/jdbccas
-          sql: SELECT p.password as password, u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, TRUE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND u.activated = 1 AND p.status = 'CURRENT' WHERE u.username = ?;
+          sql: SELECT p.password as password, not u.activated or u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, TRUE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND p.status = 'CURRENT' WHERE u.username = ?;
           fieldPassword: password
           fieldDisabled: disabled
 #          fieldExpired: expired
@@ -336,7 +336,8 @@ cas:
   # Allow to override messages locally via /var/opt/atlas/i18n/cas
   # In custom_messages only text messages to translate via crowdin
   messageBundle:
-    baseNames: file:///var/opt/atlas/i18n/cas/messages,file:///opt/atlas/i18n/cas/messages,classpath:other_messages,classpath:custom_messages,classpath:messages
+    baseNames: file:///var/opt/atlas/i18n/cas/messages,file:///opt/atlas/i18n/cas/messages,classpath:other_messages,classpath:custom_messages
+#,classpath:messages,classpath:override_messages
 
 management:
   endpoints:
