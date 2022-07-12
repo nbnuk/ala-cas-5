@@ -83,7 +83,8 @@ cas:
         maximum-cache-size: 1000 #TODO TUNING
         merger: REPLACE
 # Attributes that you wish to resolve for the principal
-        defaultAttributesToRelease: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,created,lastLogin
+        defaultAttributesToRelease: []
+#        defaultAttributesToRelease: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,created,lastLogin
       jdbc:
         - dataSourceName: java:comp/env/jdbccas
           driverClass: com.mysql.cj.jdbc.Driver
@@ -172,7 +173,7 @@ cas:
     oidc:
       core:
         userDefinedScopes:
-          ala: userid, organisation, city, state, country #, primary_user_type, secondary_user_type
+          ala: userid, organisation, city, state, country
           roles: role, authority
           'users:read':
           'users:write':
@@ -245,6 +246,7 @@ cas:
           - city  # TODO condense these into the address scope somehow?
           - state
           - country
+          - userid
         # Default algorithms minus none
         id-token-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]
         user-info-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]

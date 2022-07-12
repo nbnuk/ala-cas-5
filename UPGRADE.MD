@@ -1,4 +1,9 @@
-Upgrade notes from CAS 5.3 to 6.4
+Upgrade notes from CAS 6.5.6-1 to -2
+====================================
+
+Default attribute releases have been removed, must add attribute releases to CAS services entries in CAS Mgmt application.
+
+Upgrade notes from CAS 5.3 to 6.5
 =================================
 
 1. Spring Boot 2 application.yml config key updates:
