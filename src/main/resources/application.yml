@@ -338,8 +338,7 @@ cas:
   # Allow to override messages locally via /var/opt/atlas/i18n/cas
   # In custom_messages only text messages to translate via crowdin
   messageBundle:
-    baseNames: file:///var/opt/atlas/i18n/cas/messages,file:///opt/atlas/i18n/cas/messages,classpath:other_messages,classpath:custom_messages
-#,classpath:messages,classpath:override_messages
+    baseNames: file:///var/opt/atlas/i18n/cas/messages,file:///opt/atlas/i18n/cas/messages,classpath:other_messages,classpath:custom_messages,classpath:messages
 
 management:
   endpoints:
