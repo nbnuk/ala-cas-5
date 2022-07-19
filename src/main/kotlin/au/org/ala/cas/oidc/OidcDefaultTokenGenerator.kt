@@ -47,18 +47,7 @@ class OidcDefaultTokenGenerator(
         val registeredService = holder.registeredService
         val clientId = registeredService.clientId
 
-        val scopes = if (registeredService is OidcRegisteredService) {
-            val holderScopes = holder.scopes
-            val serviceScopes: Set<String> = registeredService.scopes
-            LOGGER.trace("Scopes assigned to service definition [{}] are [{}]", registeredService.name, serviceScopes)
-            val retainedScopes = serviceScopes.ifEmpty {
-                OidcConstants.StandardScopes.values().map { it.scope }.toSet()
-            }
-            holderScopes.retainAll(retainedScopes)
-            holderScopes
-        } else {
-            emptySet()
-        }
+        val scopes = determineValidScopes(registeredService, holder.scopes)
 
 
         val authnBuilder = DefaultAuthenticationBuilder
