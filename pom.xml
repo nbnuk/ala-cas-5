@@ -679,6 +679,11 @@
             <version>${cas.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-discovery-profile</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.apereo.cas</groupId>-->
 <!--            <artifactId>cas-server-support-configuration</artifactId>-->
@@ -850,7 +855,7 @@
 <!--            <artifactId>cas-server-support-session-mongo</artifactId>-->
 <!--            <version>${cas.version}</version>-->
 <!--        </dependency>-->
-        <!-- Above disabled to provide our own config so we can disable spring sesion with a config property -->
+        <!-- Above disabled to provide our own config so we can disable spring session with a config property -->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-mongodb</artifactId>
@@ -865,6 +870,11 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>3.3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+            <version>2.6.3</version>
         </dependency>
 
         <!-- Lombok for the CAS sources -->
