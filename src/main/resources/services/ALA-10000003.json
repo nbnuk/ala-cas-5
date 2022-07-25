@@ -5,5 +5,8 @@
   "theme" : "ala",
   "id" : 10000003,
   "description" : "All Atlas Services",
-  "evaluationOrder" : 1
+  "evaluationOrder" : 1,
+  "attributeReleasePolicy" : {
+    "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
 }
