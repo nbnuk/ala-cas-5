@@ -111,7 +111,6 @@
                             <artifactId>cas-server-webapp${app.server}</artifactId>
                             <excludes>
                                 <exclude>WEB-INF/classes/services/*.json</exclude>
-                                <exclude>WEB-INF/lib/mongo-java-driver-3.4.3.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
