@@ -16,7 +16,7 @@ spring:
 #      database: sessions
 #  session:
 #    store-type: none
-#    timeout: 28800
+#    timeout: 86400
 #    redis:
 #      namespace: 'cas'
   flyway:
@@ -166,8 +166,8 @@ cas:
 #      userProfileViewType: FLAT
       access-token:
         create-as-jwt: true
-        maxTimeToLiveInSeconds: "PT8H"
-        timeToKillInSeconds: "PT2H"
+        maxTimeToLiveInSeconds: "PT24H"
+        timeToKillInSeconds: "PT24H"
       refresh-token:
         timeToKillInSeconds: "P14D"
     oidc:
@@ -268,7 +268,7 @@ cas:
       driverClass: com.mysql.cj.jdbc.Driver
       validationQuery: /* ping */ SELECT 1
   tgc:
-    maxAge: 28800 # Same as TGT expiry
+    maxAge: 86400 # Same as TGT expiry
     secure: true
     httpOnly: true
     rememberMeMaxAge: PT7884000S #7884000
@@ -282,8 +282,8 @@ cas:
   ticket:
     tgt:
       primary:
-        maxTimeToLiveInSeconds: 28800 # PT8H
-        timeToKillInSeconds: 28800 # PT8H
+        maxTimeToLiveInSeconds: 86400 # PT24H
+        timeToKillInSeconds: 86400 # PT24H
       rememberMe:
         enabled: true
         timeToKillInSeconds: 7884000 # P3M
