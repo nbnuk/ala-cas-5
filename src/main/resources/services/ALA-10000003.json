@@ -7,6 +7,24 @@
   "description" : "All Atlas Services",
   "evaluationOrder" : 1,
   "attributeReleasePolicy" : {
-    "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes": [
+      "id",
+      "userid",
+      "givenName",
+      "sn",
+      "firstname",
+      "lastname",
+      "email",
+      "affiliation",
+      "organisation",
+      "city",
+      "state",
+      "country",
+      "role",
+      "authority",
+      "created",
+      "lastLogin"
+    ]
   }
 }
