@@ -10,7 +10,10 @@ db.services.updateOne({serviceId: '^https?://.*'}, {'$set': { 'attributeReleaseP
 ```json
 db.services.deleteOne({serviceId: '(https|imaps)://.*'})
 ```
-
+2. There is a bug in the CAS management app that will reset any OIDC/OAuth attribute release policy to denyAll if you edit it in the UI.  Blanket fix after any update until bug is fixed:
+```json
+db.services.updateMany({"_class": "org.apereo.cas.services.OidcRegisteredService"}, {$set: {"attributeReleasePolicy._class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"}});
+```
 
 Upgrade notes from CAS 5.3 to 6.5
 =================================
