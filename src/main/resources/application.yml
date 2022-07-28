@@ -345,6 +345,8 @@ management:
   endpoints:
     enabled-by-default: false
   endpoint:
+    discoveryProfile:
+      enabled: true
     info:
       enabled: true
     health:
@@ -361,6 +363,7 @@ management:
         include:
           - health
           - info
+          - discoveryProfile
 
 # Override these for non-ALA deployments
 ala:
