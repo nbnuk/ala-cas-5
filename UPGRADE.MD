@@ -1,4 +1,21 @@
-Upgrade notes from CAS 5.3 to 6.4
+Upgrade notes from CAS 6.5.6-1 to 6.5.6-2
+====================================
+
+1. Default attribute releases have been removed, must add attribute releases to CAS services entries in CAS Mgmt application.
+  a. Upgrade existing service to support Attribute resolution:
+```json
+db.services.updateOne({serviceId: '^https?://.*'}, {'$set': { 'attributeReleasePolicy._class': 'org.apereo.cas.services.ReturnAllAttributeReleasePolicy' } });
+```
+  b. Delete the default IMAPS/HTTPS provided by Apereo just in case the default ALA isn't evaluated first:
+```json
+db.services.deleteOne({serviceId: '(https|imaps)://.*'})
+```
+2. There is a bug in the CAS management app that will reset any OIDC/OAuth attribute release policy to denyAll if you edit it in the UI.  Blanket fix after any update until bug is fixed:
+```json
+db.services.updateMany({"_class": "org.apereo.cas.services.OidcRegisteredService"}, {$set: {"attributeReleasePolicy._class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"}});
+```
+
+Upgrade notes from CAS 5.3 to 6.5
 =================================
 
 1. Spring Boot 2 application.yml config key updates:

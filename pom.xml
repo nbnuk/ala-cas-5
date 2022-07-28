@@ -14,7 +14,7 @@
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
     <!-- Version should ${cas.version}-${ala.build.version}(-SNAPSHOT)? -->
-    <version>6.5.6-1</version>
+    <version>6.5.6-2</version>
 
     <name>ALA CAS</name>
     <description>ALA Central Authentication Service</description>
@@ -111,7 +111,6 @@
                             <artifactId>cas-server-webapp${app.server}</artifactId>
                             <excludes>
                                 <exclude>WEB-INF/classes/services/*.json</exclude>
-                                <exclude>WEB-INF/lib/mongo-java-driver-3.4.3.jar</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -162,7 +161,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>3.10.1</version>
+                <configuration>
+                    <release>${targetJdk}</release>
+                </configuration>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by maven -->
                     <execution>
@@ -190,6 +192,9 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
                 <version>1.21</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
 <!--            <plugin>-->
 <!--                <artifactId>maven-surefire-plugin</artifactId>-->
@@ -673,6 +678,11 @@
             <version>${cas.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-discovery-profile</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.apereo.cas</groupId>-->
 <!--            <artifactId>cas-server-support-configuration</artifactId>-->
@@ -844,7 +854,7 @@
 <!--            <artifactId>cas-server-support-session-mongo</artifactId>-->
 <!--            <version>${cas.version}</version>-->
 <!--        </dependency>-->
-        <!-- Above disabled to provide our own config so we can disable spring sesion with a config property -->
+        <!-- Above disabled to provide our own config so we can disable spring session with a config property -->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-mongodb</artifactId>
@@ -858,7 +868,12 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
-            <version>3.3.4</version>
+            <version>3.3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+            <version>2.6.3</version>
         </dependency>
 
         <!-- Lombok for the CAS sources -->

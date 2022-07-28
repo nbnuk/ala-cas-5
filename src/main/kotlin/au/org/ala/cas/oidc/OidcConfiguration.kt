@@ -1,8 +1,12 @@
 package au.org.ala.cas.oidc
 
 import org.apereo.cas.CentralAuthenticationService
+import org.apereo.cas.authentication.principal.PrincipalFactory
+import org.apereo.cas.authentication.principal.ServiceFactory
+import org.apereo.cas.authentication.principal.WebApplicationService
 import org.apereo.cas.configuration.CasConfigurationProperties
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator
+import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory
@@ -36,5 +40,19 @@ class OidcConfiguration {
             defaultDeviceUserCodeFactory, defaultRefreshTokenFactory,
             centralAuthenticationService, casProperties
         )
+    }
+
+    @Bean("oauthCasAuthenticationBuilder")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    fun oauthCasAuthenticationBuilder(
+        @Qualifier("oauthPrincipalFactory")
+        oauthPrincipalFactory: PrincipalFactory,
+        @Qualifier("profileScopeToAttributesFilter")
+        profileScopeToAttributesFilter: OAuth20ProfileScopeToAttributesFilter,
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+        webApplicationServiceFactory: ServiceFactory<WebApplicationService>,
+        casProperties: CasConfigurationProperties
+    ): OAuth20CasAuthenticationBuilder {
+        return OidcDefaultCasAuthenticationBuilder(oauthPrincipalFactory, webApplicationServiceFactory, profileScopeToAttributesFilter, casProperties)
     }
 }

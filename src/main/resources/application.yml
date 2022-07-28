@@ -16,7 +16,7 @@ spring:
 #      database: sessions
 #  session:
 #    store-type: none
-#    timeout: 28800
+#    timeout: 86400
 #    redis:
 #      namespace: 'cas'
   flyway:
@@ -57,9 +57,9 @@ cas:
 #    repeatInterval: 120000
 #    startDelay: 15000
     core:
-      init-from-json: true
+      init-from-json: false
 #    json:
-#      location: classpath:/services
+#      location: classpath:services
     mongo:
       collection: services
       databaseName: cas-service-registry
@@ -83,7 +83,8 @@ cas:
         maximum-cache-size: 1000 #TODO TUNING
         merger: REPLACE
 # Attributes that you wish to resolve for the principal
-        defaultAttributesToRelease: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,created,lastLogin
+        default-attributes-to-release: []
+#        default-attributes-to-release: id,userid,givenName,sn,firstname,lastname,email,affiliation,organisation,city,state,country,role,authority,created,lastLogin
       jdbc:
         - dataSourceName: java:comp/env/jdbccas
           driverClass: com.mysql.cj.jdbc.Driver
@@ -108,6 +109,7 @@ cas:
             firstname: firstname
             sn: sn
             lastname: lastname
+            displayName: displayName
             email: email
             authority: authority
             role: role
@@ -127,7 +129,7 @@ cas:
     jdbc:
       query:
         - dataSourceName: java:comp/env/jdbccas
-          sql: SELECT p.password as password, u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, FALSE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND u.activated = 1 AND p.status = 'CURRENT' AND p.type = 'bcrypt' WHERE u.username = ?;
+          sql: SELECT p.password as password, not u.activated or u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, FALSE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND p.status = 'CURRENT' AND p.type = 'bcrypt' WHERE u.username = ?;
           fieldPassword: password
           fieldDisabled: disabled
 #          fieldExpired: expired
@@ -139,7 +141,7 @@ cas:
             characterEncoding: UTF-8
             strength: 10
         - dataSourceName: java:comp/env/jdbccas
-          sql: SELECT p.password as password, u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, TRUE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND u.activated = 1 AND p.status = 'CURRENT' WHERE u.username = ?;
+          sql: SELECT p.password as password, not u.activated or u.locked as disabled, COALESCE(p.expiry < CURRENT_TIMESTAMP(), 0) as expired, TRUE as legacy_password FROM passwords p JOIN users u ON u.userid = p.userid AND p.status = 'CURRENT' WHERE u.username = ?;
           fieldPassword: password
           fieldDisabled: disabled
 #          fieldExpired: expired
@@ -149,7 +151,6 @@ cas:
             type: au.org.ala.cas.password.AlaPasswordEncoder
     pac4j:
       core:
-        user-profile-view-type: FLAT
         typedIdUsed: true
 #      autoRedirect: false
 #      name:
@@ -165,22 +166,22 @@ cas:
 #      userProfileViewType: FLAT
       access-token:
         create-as-jwt: true
-        maxTimeToLiveInSeconds: "PT8H"
-        timeToKillInSeconds: "PT2H"
+        maxTimeToLiveInSeconds: "PT24H"
+        timeToKillInSeconds: "PT24H"
       refresh-token:
         timeToKillInSeconds: "P14D"
     oidc:
       core:
         userDefinedScopes:
-          ala: userid, organisation, city, state, country #, primary_user_type, secondary_user_type
+          ala: userid, organisation, city, state, country
           roles: role, authority
-          'users:read':
-          'users:write':
-          'ecodata:read':
-          'ecodata:write':
-          'biocache:read':
-          'biocache:write':
-          'ala:internal':
+          'users\read':
+          'users\write':
+          'ecodata\read':
+          'ecodata\write':
+          'biocache\read':
+          'biocache\write':
+          'ala\internal':
         claimsMap:
           sub: userid #	string	Subject - Identifier for the End-User at the Issuer.
           name: displayName #	string	End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
@@ -211,13 +212,13 @@ cas:
           - offline_access
           - ala
           - roles
-          - users:read
-          - users:write
-          - ecodata:read
-          - ecodata:write
-          - biocache:read
-          - biocache:write
-          - ala:internal
+          - 'users\read'
+          - 'users\write'
+          - 'ecodata\read'
+          - 'ecodata\write'
+          - 'biocache\read'
+          - 'biocache\write'
+          - 'ala\internal'
         claims: # This list is all the specified oidc claims plus ALA specific
           - sub
           - name
@@ -245,12 +246,14 @@ cas:
           - city  # TODO condense these into the address scope somehow?
           - state
           - country
+          - userid
         # Default algorithms minus none
         id-token-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]
         user-info-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]
         request-object-signing-alg-values-supported: ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512"]
-      file-system:
-        jwks-file: file:/data/cas/keystore.jwks
+      jwks:
+        file-system:
+          jwks-file: file:/data/cas/keystore.jwks
     throttle:
       failure:
         range-seconds: 10
@@ -265,7 +268,7 @@ cas:
       driverClass: com.mysql.cj.jdbc.Driver
       validationQuery: /* ping */ SELECT 1
   tgc:
-    maxAge: 28800 # Same as TGT expiry
+    maxAge: 86400 # Same as TGT expiry
     secure: true
     httpOnly: true
     rememberMeMaxAge: PT7884000S #7884000
@@ -279,8 +282,8 @@ cas:
   ticket:
     tgt:
       primary:
-        maxTimeToLiveInSeconds: 28800 # PT8H
-        timeToKillInSeconds: 28800 # PT8H
+        maxTimeToLiveInSeconds: 86400 # PT24H
+        timeToKillInSeconds: 86400 # PT24H
       rememberMe:
         enabled: true
         timeToKillInSeconds: 7884000 # P3M
@@ -342,6 +345,8 @@ management:
   endpoints:
     enabled-by-default: false
   endpoint:
+    discoveryProfile:
+      enabled: true
     info:
       enabled: true
     health:
@@ -358,6 +363,7 @@ management:
         include:
           - health
           - info
+          - discoveryProfile
 
 # Override these for non-ALA deployments
 ala:

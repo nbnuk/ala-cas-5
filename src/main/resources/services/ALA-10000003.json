@@ -5,5 +5,27 @@
   "theme" : "ala",
   "id" : 10000003,
   "description" : "All Atlas Services",
-  "evaluationOrder" : 1
+  "evaluationOrder" : 1,
+  "attributeReleasePolicy" : {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      ["id",
+      "userid",
+      "givenName",
+      "sn",
+      "firstname",
+      "lastname",
+      "email",
+      "affiliation",
+      "organisation",
+      "city",
+      "state",
+      "country",
+      "role",
+      "authority",
+      "created",
+      "lastLogin"]
+    ]
+  }
 }
