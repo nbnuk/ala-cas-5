@@ -175,13 +175,13 @@ cas:
         userDefinedScopes:
           ala: userid, organisation, city, state, country
           roles: role, authority
-          'users\read':
-          'users\write':
-          'ecodata\read':
-          'ecodata\write':
-          'biocache\read':
-          'biocache\write':
-          'ala\internal':
+          'users/read':
+          'users/write':
+          'ecodata/read':
+          'ecodata/write':
+          'biocache/read':
+          'biocache/write':
+          'ala/internal':
         claimsMap:
           sub: userid #	string	Subject - Identifier for the End-User at the Issuer.
           name: displayName #	string	End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
@@ -212,13 +212,13 @@ cas:
           - offline_access
           - ala
           - roles
-          - 'users\read'
-          - 'users\write'
-          - 'ecodata\read'
-          - 'ecodata\write'
-          - 'biocache\read'
-          - 'biocache\write'
-          - 'ala\internal'
+          - 'users/read'
+          - 'users/write'
+          - 'ecodata/read'
+          - 'ecodata/write'
+          - 'biocache/read'
+          - 'biocache/write'
+          - 'ala/internal'
         claims: # This list is all the specified oidc claims plus ALA specific
           - sub
           - name
