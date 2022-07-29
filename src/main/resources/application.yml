@@ -30,14 +30,14 @@ spring:
     locations: classpath:db/migration # locations of migrations scripts
 
 server:
-  tomcat:
-    remote_ip_header: x-forwarded-for
-    port-header: x-forwarded-port
-    protocol_header: x-forwarded-proto
-    protocol-header-https-value: https
-    # Add IPv6 localhost to default list
-    internal-proxies: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1
   forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+      port-header: x-forwarded-port
+      remote-ip-header: x-forwarded-for
+      protocol-header-https-value: https
+
 
 jndi:
   hikari:
@@ -175,13 +175,13 @@ cas:
         userDefinedScopes:
           ala: userid, organisation, city, state, country
           roles: role, authority
-          'users\read':
-          'users\write':
-          'ecodata\read':
-          'ecodata\write':
-          'biocache\read':
-          'biocache\write':
-          'ala\internal':
+          'users/read':
+          'users/write':
+          'ecodata/read':
+          'ecodata/write':
+          'biocache/read':
+          'biocache/write':
+          'ala/internal':
         claimsMap:
           sub: userid #	string	Subject - Identifier for the End-User at the Issuer.
           name: displayName #	string	End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
@@ -212,13 +212,13 @@ cas:
           - offline_access
           - ala
           - roles
-          - 'users\read'
-          - 'users\write'
-          - 'ecodata\read'
-          - 'ecodata\write'
-          - 'biocache\read'
-          - 'biocache\write'
-          - 'ala\internal'
+          - 'users/read'
+          - 'users/write'
+          - 'ecodata/read'
+          - 'ecodata/write'
+          - 'biocache/read'
+          - 'biocache/write'
+          - 'ala/internal'
         claims: # This list is all the specified oidc claims plus ALA specific
           - sub
           - name
