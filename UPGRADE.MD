@@ -8,7 +8,7 @@ db.services.updateOne({serviceId: '^https?://.*'}, {'$set': { 'attributeReleaseP
 ```
   b. Delete the default IMAPS/HTTPS service provided by Apereo:
 ```json
-db.services.deleteOne({serviceId: '(https|imaps)://.*'})
+db.services.deleteOne({serviceId: '^(https|imaps)://.*'})
 ```
 
 
