@@ -22,7 +22,18 @@
         <connection>scm:git:https://github.com/AtlasOfLivingAustralia/ala-cas-5.git</connection>
         <url>https://github.com/AtlasOfLivingAustralia/ala-cas-5</url>
     </scm>
-
+    <distributionManagement>
+        <repository>
+            <id>uk-nbn-releases</id>
+            <name>Internal Releases</name>
+            <url>https://repository.gbif.org/repository/uk-nbn-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>uk-nbn-snapshots</id>
+            <name>Internal Releases</name>
+            <url>https://repository.gbif.org/repository/uk-nbn-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
     <build>
         <resources>
             <resource>
