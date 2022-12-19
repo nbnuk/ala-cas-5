@@ -12,11 +12,11 @@ cache:
   - "$HOME/.m2/repository"
   - "$HOME/.m2/wrapper"
 before_install:
-- export TZ=Australia/Canberra
+- export TZ=Europe/London
 - date
 - mkdir -p ~/.m2
 - wget -q -O ~/.m2/settings.xml https://raw.githubusercontent.com/nbnuk/travis-build-configuration/master/travis_maven_settings.xml
-after_success: '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./mvnw deploy -DskipTests=true'
+after_success: '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./mvnw -B deploy -DskipTests=true'
 env:
   global:
   - secure: BW4FswyT+ZB8351SQnUbrCMGr3PCFRL4TbueAcdzFZMy4t0RoDrD6zEC/EUjBtKz2tiijYXDGqyoCRtHs+zStBVMLjriraVqPED2a9PnbCIyQpRn7fp/wdlzqPWcgM/nFj+yQyKkR3i+GpWNRViPO2kqdOmbF2agcD9Fzf0rOQflkhT8b9YcZUVhNZ9UUsYrAoWs2Sf8cvVkEJG3aqCLOpGrIs+dfr2u5cAyvi6ScsWPcb2Go46zaEsAld2gGPbKuSnAAjpxk1F1Bfg0cfWk2B21N7Pz7/h6sPj8Fe14hSQ1rWCtvFaR2+wM3fU31y91z+U4MzgTpdzTJ++UhvFQuawcjXzVurFfLeazHVAljzlnZXeT3cxU157Dxr8PcR/gg04Wm3nurwtMpc4anXwuudFTromhnbpsuBg0WXAarEiB1U2dBjO4JfFGL486QjN6Ppd3olMXLISmQe+x2f7QyYmVq/iZcb4pQ5SLY44YtdS6woEztK6Z1OcxILrhYRyfhbSKL52HCBJOGAvGFdrVDObU2qMGwRhlCa3gFXtg408b7BkiaK1zMtDQ8SGivigztuHk3seLASECVmuqECtLA3onS02qIJ3gFdJWZgzqVrvRxaA89bB2b4SKPLADuftMNa5pVl12+gT+BKw7rlCvwnrBn5cWbjtazcdCG3jsAYY=
