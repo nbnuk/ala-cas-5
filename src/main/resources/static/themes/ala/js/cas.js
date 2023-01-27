@@ -88,6 +88,7 @@ function disableEmptyInputFormSubmission() {
      * Handle auto-complete events to the extent possible.
      */
     setTimeout(function(){
+        $("#username").click();
         var uid = $("#username").val();
         if (uid != null && uid != "") {
             $("#username").change();
