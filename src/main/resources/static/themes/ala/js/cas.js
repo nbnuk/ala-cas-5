@@ -76,9 +76,7 @@ function disableEmptyInputFormSubmission() {
         var enableSubmission = $('#fm1 input[name="username"]').val().trim() &&
                                $('#fm1 input[name="password"]').val().trim();
 
-        var autofilled = $('#fm1 input[name="username"]').is(":-internal-autofill-selected");
-
-        if (enableSubmission || autofilled) {
+        if (enableSubmission) {
             $("#fm1 input[name=submit]").removeAttr('disabled');
             event.stopPropagation();
         } else {
@@ -90,8 +88,9 @@ function disableEmptyInputFormSubmission() {
      * Handle auto-complete events to the extent possible.
      */
     setTimeout(function(){
+        var autofilled = $('#fm1 input[name="username"]').is(":-internal-autofill-selected");
         var uid = $("#username").val();
-        if (uid != null && uid != "") {
+        if ((uid != null && uid != "") || autofilled) {
             $("#username").change();
             $("#username").focus();
             $("#fm1 input[name=submit]").removeAttr('disabled');
