@@ -14,7 +14,7 @@
     <artifactId>cas</artifactId>
     <packaging>war</packaging>
     <!-- Version should ${cas.version}-${ala.build.version}(-SNAPSHOT)? -->
-    <version>5.3.12-5-NBN-0-0-2-SNAPSHOT</version>
+    <version>5.3.12-5-NBN-0-0-2</version>
 
     <name>ALA CAS 5</name>
     <description>ALA Central Authentication Service v5</description>
